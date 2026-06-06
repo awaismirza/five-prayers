@@ -50,6 +50,19 @@ struct PrayerViewModel: Identifiable {
     var isPrayed: Bool { if case .prayed = display { true } else { false } }
 }
 
+// MARK: - Accent color
+
+enum AccentColor: String, CaseIterable {
+    case emerald, teal, pine
+    var label: String {
+        switch self {
+        case .emerald: return "Emerald"
+        case .teal:    return "Teal"
+        case .pine:    return "Pine"
+        }
+    }
+}
+
 // MARK: - Theme
 
 struct AppTheme {
@@ -74,55 +87,138 @@ struct AppTheme {
     let faint: Color
     let idleRing: Color
 
-    static func make(dark: Bool) -> AppTheme {
-        dark ? .darkTheme : .lightTheme
+    static func make(dark: Bool, accent: AccentColor = .emerald) -> AppTheme {
+        struct Pal { let lp, ld, dp, dd: String }
+        let pal: Pal
+        switch accent {
+        case .emerald: pal = Pal(lp: "14705E", ld: "0C4A3E", dp: "4ECBA5", dd: "0F2C26")
+        case .teal:    pal = Pal(lp: "0E7490", ld: "0A4D60", dp: "41C2DE", dd: "0C2A33")
+        case .pine:    pal = Pal(lp: "2C6E55", ld: "1C4A39", dp: "5BC79E", dd: "12281F")
+        }
+        if !dark {
+            return AppTheme(
+                dark: false, page: Color(hex: "F5F3ED"), card: .white,
+                cardSub: Color(hex: "FBFAF6"), line: Color(hex: "141C1A").opacity(0.07),
+                primary: Color(hex: pal.lp), primaryDeep: Color(hex: pal.ld), onPrimary: .white,
+                heroFrom: Color(hex: pal.lp), heroTo: Color(hex: pal.ld),
+                prayed: Color(hex: "3E9E6F"), prayedSoft: Color(hex: "E7F2EA"), prayedOn: Color(hex: "2C7E54"),
+                amber: Color(hex: "C98A2E"), amberSoft: Color(hex: "F8EFDC"), amberOn: Color(hex: "9A6916"),
+                text: Color(hex: "23282A"), muted: Color(hex: "7C8682"),
+                faint: Color(hex: "A8B0AC"), idleRing: Color(hex: "D7DCD7")
+            )
+        }
+        return AppTheme(
+            dark: true, page: Color(hex: "0E1513"), card: Color(hex: "18211E"),
+            cardSub: Color(hex: "141C1A"), line: Color.white.opacity(0.07),
+            primary: Color(hex: pal.dp), primaryDeep: Color(hex: pal.dd), onPrimary: Color(hex: "06140F"),
+            heroFrom: Color(hex: pal.dd), heroTo: Color(hex: "0A1714"),
+            prayed: Color(hex: "5FC98C"), prayedSoft: Color(hex: "5FC98C").opacity(0.13), prayedOn: Color(hex: "7AD3A0"),
+            amber: Color(hex: "E0A64A"), amberSoft: Color(hex: "E0A64A").opacity(0.14), amberOn: Color(hex: "E9B968"),
+            text: Color(hex: "ECEFEC"), muted: Color(hex: "8FA09A"),
+            faint: Color(hex: "5E6E68"), idleRing: Color(hex: "34403B")
+        )
     }
 
-    static let lightTheme = AppTheme(
-        dark: false,
-        page:       Color(hex: "F5F3ED"),
-        card:       .white,
-        cardSub:    Color(hex: "FBFAF6"),
-        line:       Color(hex: "141C1A").opacity(0.07),
-        primary:    Color(hex: "14705E"),
-        primaryDeep: Color(hex: "0C4A3E"),
-        onPrimary:  .white,
-        heroFrom:   Color(hex: "14705E"),
-        heroTo:     Color(hex: "0C4A3E"),
-        prayed:     Color(hex: "3E9E6F"),
-        prayedSoft: Color(hex: "E7F2EA"),
-        prayedOn:   Color(hex: "2C7E54"),
-        amber:      Color(hex: "C98A2E"),
-        amberSoft:  Color(hex: "F8EFDC"),
-        amberOn:    Color(hex: "9A6916"),
-        text:       Color(hex: "23282A"),
-        muted:      Color(hex: "7C8682"),
-        faint:      Color(hex: "A8B0AC"),
-        idleRing:   Color(hex: "D7DCD7")
-    )
+    static let lightTheme = make(dark: false)
+    static let darkTheme  = make(dark: true)
+}
 
-    static let darkTheme = AppTheme(
-        dark: true,
-        page:       Color(hex: "0E1513"),
-        card:       Color(hex: "18211E"),
-        cardSub:    Color(hex: "141C1A"),
-        line:       Color.white.opacity(0.07),
-        primary:    Color(hex: "4ECBA5"),
-        primaryDeep: Color(hex: "0F2C26"),
-        onPrimary:  Color(hex: "06140F"),
-        heroFrom:   Color(hex: "0F2C26"),
-        heroTo:     Color(hex: "0A1714"),
-        prayed:     Color(hex: "5FC98C"),
-        prayedSoft: Color(hex: "5FC98C").opacity(0.13),
-        prayedOn:   Color(hex: "7AD3A0"),
-        amber:      Color(hex: "E0A64A"),
-        amberSoft:  Color(hex: "E0A64A").opacity(0.14),
-        amberOn:    Color(hex: "E9B968"),
-        text:       Color(hex: "ECEFEC"),
-        muted:      Color(hex: "8FA09A"),
-        faint:      Color(hex: "5E6E68"),
-        idleRing:   Color(hex: "34403B")
+// MARK: - Analytics stats
+
+struct PrayerPrayerStat {
+    let logged: Int
+    let onTime: Int
+    let madeUp: Int
+    var onTimeRate: Int { logged > 0 ? Int(Double(onTime) / Double(logged) * 100) : 0 }
+}
+
+struct PrayerStats {
+    let daysTracked: Int
+    let completionRate: Int
+    let onTimeRate: Int
+    let totalLogged: Int
+    let totalOnTime: Int
+    let totalMadeUp: Int
+    let currentStreak: Int
+    let longestStreak: Int
+    let byPrayer: [String: PrayerPrayerStat]
+}
+
+func computeStats(entries: [PrayerEntry], trackingStart: String) -> PrayerStats {
+    let fmt = DateFormatter()
+    fmt.dateFormat = "yyyy-MM-dd"
+    let cal = Calendar.current
+    let startDate = fmt.date(from: trackingStart) ?? Date()
+    let now = Date()
+    let daysTracked = max(1, (cal.dateComponents([.day], from: startDate, to: now).day ?? 0) + 1)
+
+    var totalOnTime = 0, totalMadeUp = 0
+    var byRaw: [String: (logged: Int, onTime: Int, madeUp: Int)] = [:]
+    for entry in entries {
+        var b = byRaw[entry.prayerId] ?? (0, 0, 0)
+        b.logged += 1
+        if entry.madeUp { b.madeUp += 1; totalMadeUp += 1 }
+        else             { b.onTime += 1; totalOnTime += 1 }
+        byRaw[entry.prayerId] = b
+    }
+
+    let totalLogged = entries.count
+    let expected = daysTracked * 5
+    let completionRate = expected > 0 ? min(100, Int(Double(totalLogged) / Double(expected) * 100)) : 0
+    let onTimeRate = totalLogged > 0 ? Int(Double(totalOnTime) / Double(totalLogged) * 100) : 0
+
+    // Streak: consecutive days with all 5 prayers
+    var dayCount: [String: Int] = [:]
+    for entry in entries { dayCount[entry.dayKey, default: 0] += 1 }
+    let fullDays = dayCount.filter { $0.value >= 5 }.keys.sorted()
+
+    var tempStreak = 0, longestStreak = 0
+    var prevDate: Date? = nil
+    for dayStr in fullDays {
+        guard let date = fmt.date(from: dayStr) else { continue }
+        if let prev = prevDate,
+           (cal.dateComponents([.day], from: prev, to: date).day ?? 0) == 1 {
+            tempStreak += 1
+        } else {
+            tempStreak = 1
+        }
+        longestStreak = max(longestStreak, tempStreak)
+        prevDate = date
+    }
+    var currentStreak = 0
+    if let lastStr = fullDays.last, let lastDate = fmt.date(from: lastStr) {
+        if (cal.dateComponents([.day], from: lastDate, to: now).day ?? 0) <= 1 {
+            currentStreak = tempStreak
+        }
+    }
+
+    return PrayerStats(
+        daysTracked: daysTracked, completionRate: completionRate,
+        onTimeRate: onTimeRate, totalLogged: totalLogged,
+        totalOnTime: totalOnTime, totalMadeUp: totalMadeUp,
+        currentStreak: currentStreak, longestStreak: longestStreak,
+        byPrayer: byRaw.mapValues { v in PrayerPrayerStat(logged: v.logged, onTime: v.onTime, madeUp: v.madeUp) }
     )
+}
+
+// MARK: - CSV export
+
+func buildCSV(entries: [PrayerEntry]) -> String {
+    var rows = ["Date,Fajr,Dhuhr,Asr,Maghrib,Isha"]
+    let byDay = Dictionary(grouping: entries, by: \.dayKey)
+    for key in byDay.keys.sorted() {
+        let dayEntries = byDay[key]!
+        var cells = [key]
+        for prayer in Prayer.all {
+            if let e = dayEntries.first(where: { $0.prayerId == prayer.id }) {
+                cells.append(e.madeUp ? "Made up" : "On time")
+            } else {
+                cells.append("-")
+            }
+        }
+        rows.append(cells.joined(separator: ","))
+    }
+    return rows.joined(separator: "\n")
 }
 
 // MARK: - Color hex init

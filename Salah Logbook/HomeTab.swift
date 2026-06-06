@@ -5,6 +5,7 @@ import Combine
 struct HomeTab: View {
     let T: AppTheme
     let showArabic: Bool
+    @ObservedObject var prayerTimeCache: PrayerTimeCache
 
     @Environment(\.modelContext) private var modelContext
     @Query private var allEntries: [PrayerEntry]
@@ -18,8 +19,19 @@ struct HomeTab: View {
     private var todayKey: String { makeDayKey() }
     private var todayEntries: [PrayerEntry] { allEntries.filter { $0.dayKey == todayKey } }
     private var nowMin: Int { currentMinutes() }
-    private var prayerStates: [PrayerViewModel] { decoratePrayers(entries: todayEntries, nowMin: nowMin) }
+
+    private var todayPrayerTimes: DailyPrayerTimes? { prayerTimeCache.prayerTimes(for: Date()) }
+    private var todaysPrayers: [Prayer] { Prayer.dailyPrayers(from: todayPrayerTimes) }
+    private var prayerStates: [PrayerViewModel] { decoratePrayers(prayers: todaysPrayers, entries: todayEntries, nowMin: nowMin) }
     private var prayedCount: Int { prayerStates.filter(\.isPrayed).count }
+
+    private var footerText: String {
+        if prayerTimeCache.isDownloading { return "Downloading prayer times…" }
+        if let loc = prayerTimeCache.selectedLocation {
+            return "Times downloaded for \(loc.city), \(loc.country)."
+        }
+        return "Using fallback prayer times. Choose your city in Settings."
+    }
 
     private var encourageText: String {
         let remaining = prayerStates.count - prayedCount
@@ -85,7 +97,7 @@ struct HomeTab: View {
                         }
                     }
 
-                    Text("Tap any prayer to log it. Times shown for your location.")
+                    Text(footerText)
                         .font(.system(size: 12.5))
                         .foregroundStyle(T.faint)
                         .multilineTextAlignment(.center)

@@ -1,0 +1,547 @@
+/* ─── Design tokens ─────────────────────────────────────────── */
+:root {
+  --bg:           #F7F4EC;
+  --card:         #FFFFFF;
+  --text:         #17211D;
+  --muted:        #7C8982;
+  --primary:      #1F6F55;
+  --primary-dark: #0D3F35;
+  --gold:         #D8B15F;
+  --gold-light:   #F3E8C8;
+  --border:       rgba(23, 33, 29, 0.10);
+  --shadow:       0 2px 24px rgba(23, 33, 29, 0.08);
+  --shadow-card:  0 1px 8px rgba(23, 33, 29, 0.06);
+  --radius:       16px;
+  --radius-sm:    10px;
+}
+
+/* ─── Reset ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; }
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+ul { list-style: none; }
+
+/* ─── Layout helpers ─────────────────────────────────────────── */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+/* ─── Nav ────────────────────────────────────────────────────── */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(247, 244, 236, 0.92);
+  backdrop-filter: saturate(180%) blur(12px);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+  max-width: 1100px;
+  margin: 0 auto;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--text);
+}
+.nav-brand:hover { text-decoration: none; }
+.nav-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+.nav-title {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+  color: var(--primary-dark);
+}
+.nav-links {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.nav-links a {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--primary); text-decoration: none; }
+.nav-links a.active { color: var(--primary); font-weight: 600; }
+
+/* ─── Buttons ────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: var(--radius-sm);
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.btn:hover { opacity: 0.88; text-decoration: none; transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+.btn-ghost {
+  background: transparent;
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+}
+.btn-disabled {
+  background: rgba(23, 33, 29, 0.08);
+  color: var(--muted);
+  cursor: default;
+  pointer-events: none;
+}
+.btn-disabled:hover { opacity: 1; transform: none; }
+
+/* ─── Hero ───────────────────────────────────────────────────── */
+.hero {
+  padding: 96px 24px 80px;
+  text-align: center;
+  max-width: 760px;
+  margin: 0 auto;
+}
+.hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--gold-light);
+  color: var(--primary-dark);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  padding: 6px 14px;
+  border-radius: 100px;
+  margin-bottom: 28px;
+  border: 1px solid rgba(216, 177, 95, 0.35);
+}
+.hero-eyebrow span { font-size: 16px; }
+.hero h1 {
+  font-size: clamp(34px, 6vw, 58px);
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  line-height: 1.1;
+  color: var(--primary-dark);
+  margin-bottom: 20px;
+}
+.hero h1 em {
+  font-style: normal;
+  color: var(--primary);
+}
+.hero p {
+  font-size: clamp(16px, 2.5vw, 18px);
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 36px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.hero-actions {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ─── Section labels ─────────────────────────────────────────── */
+.section-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+
+/* ─── Features grid ──────────────────────────────────────────── */
+.features {
+  padding: 64px 24px;
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.features-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+.features-header h2 {
+  font-size: clamp(26px, 4vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  color: var(--primary-dark);
+}
+.features-header p {
+  color: var(--muted);
+  margin-top: 10px;
+  font-size: 16px;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.feature-card {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+.feature-card:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+.feature-icon {
+  font-size: 28px;
+  margin-bottom: 16px;
+}
+.feature-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 8px;
+  letter-spacing: -0.2px;
+}
+.feature-card p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* ─── Privacy callout ────────────────────────────────────────── */
+.privacy-callout {
+  padding: 96px 24px;
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  gap: 60px;
+  align-items: center;
+}
+.privacy-callout-text { flex: 1; }
+.privacy-callout h2 {
+  font-size: clamp(28px, 4vw, 42px);
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  color: var(--primary-dark);
+  margin-bottom: 16px;
+}
+.privacy-callout p {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.75;
+}
+.privacy-badge {
+  background: var(--primary-dark);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 32px 36px;
+  flex-shrink: 0;
+  width: 220px;
+  text-align: center;
+}
+.privacy-badge-icon { font-size: 40px; margin-bottom: 12px; }
+.privacy-badge h4 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.privacy-badge ul {
+  list-style: none;
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.9;
+}
+
+/* ─── App store section ──────────────────────────────────────── */
+.appstore-section {
+  background: var(--primary-dark);
+  color: #fff;
+  padding: 80px 24px;
+  text-align: center;
+}
+.appstore-section .section-label { color: var(--gold); }
+.appstore-section h2 {
+  font-size: clamp(26px, 4vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.8px;
+  margin-bottom: 14px;
+}
+.appstore-section p {
+  font-size: 16px;
+  color: rgba(255,255,255,0.72);
+  max-width: 520px;
+  margin: 0 auto 32px;
+  line-height: 1.7;
+}
+.appstore-section .btn-disabled {
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.55);
+  border: 1px solid rgba(255,255,255,0.18);
+}
+
+/* ─── Footer ─────────────────────────────────────────────────── */
+.site-footer {
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  padding: 40px 24px;
+}
+.footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.footer-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+}
+.footer-brand-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--primary-dark);
+}
+.footer-copy {
+  font-size: 13px;
+  color: var(--muted);
+}
+.footer-links {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.footer-links a {
+  font-size: 13px;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+.footer-links a:hover { color: var(--primary); text-decoration: none; }
+
+/* ─── Inner page hero ────────────────────────────────────────── */
+.page-hero {
+  padding: 64px 24px 48px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+}
+.page-hero-inner {
+  max-width: 800px;
+  margin: 0 auto;
+}
+.page-hero .page-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin-bottom: 14px;
+}
+.page-hero h1 {
+  font-size: clamp(28px, 5vw, 46px);
+  font-weight: 800;
+  letter-spacing: -1px;
+  color: var(--primary-dark);
+  margin-bottom: 12px;
+}
+.page-hero p {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.page-hero .effective-date {
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ─── Prose (privacy / terms) ────────────────────────────────── */
+.prose-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 56px 24px 80px;
+}
+.prose-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 48px 52px;
+  box-shadow: var(--shadow-card);
+}
+.prose-card h2 {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+  color: var(--primary-dark);
+  margin-top: 36px;
+  margin-bottom: 12px;
+  padding-top: 28px;
+  border-top: 1px solid var(--border);
+}
+.prose-card h2:first-child {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
+.prose-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: 20px;
+  margin-bottom: 8px;
+}
+.prose-card p {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.75;
+  margin-bottom: 12px;
+}
+.prose-card ul {
+  list-style: none;
+  margin: 8px 0 16px;
+  padding: 0;
+}
+.prose-card ul li {
+  font-size: 15px;
+  color: var(--muted);
+  padding: 4px 0 4px 20px;
+  position: relative;
+  line-height: 1.7;
+}
+.prose-card ul li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+}
+.prose-card .email-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary);
+  margin-top: 8px;
+  text-decoration: none;
+}
+.prose-card .email-link:hover { text-decoration: underline; }
+
+/* ─── Support page ───────────────────────────────────────────── */
+.support-grid {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 56px 24px 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.support-contact-card {
+  background: var(--primary-dark);
+  color: #fff;
+  border-radius: var(--radius);
+  padding: 40px 44px;
+}
+.support-contact-card h2 {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+.support-contact-card p {
+  font-size: 15px;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 20px;
+  line-height: 1.65;
+}
+.support-contact-card .btn {
+  background: var(--gold);
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+.support-contact-card .btn:hover { opacity: 0.88; }
+.faq-section h2 {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--primary-dark);
+  margin-bottom: 16px;
+  letter-spacing: -0.3px;
+}
+.faq-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 28px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-card);
+}
+.faq-item h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.faq-item p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 680px) {
+  .privacy-callout {
+    flex-direction: column;
+    gap: 32px;
+    padding: 64px 24px;
+  }
+  .privacy-badge { width: 100%; }
+  .prose-card { padding: 28px 20px; }
+  .support-contact-card { padding: 28px 24px; }
+  .footer-inner { flex-direction: column; align-items: flex-start; gap: 16px; }
+  .hero { padding: 64px 24px 56px; }
+}

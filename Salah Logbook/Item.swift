@@ -25,13 +25,26 @@ struct Prayer: Identifiable {
     let arabic: String
     let timeMinutes: Int
 
-    static let all: [Prayer] = [
+    static let fallback: [Prayer] = [
         Prayer(id: "fajr",    name: "Fajr",    arabic: "الفجر",  timeMinutes: 5  * 60 + 12),
         Prayer(id: "dhuhr",   name: "Dhuhr",   arabic: "الظهر",  timeMinutes: 13 * 60 + 4),
         Prayer(id: "asr",     name: "Asr",     arabic: "العصر",  timeMinutes: 16 * 60 + 42),
         Prayer(id: "maghrib", name: "Maghrib", arabic: "المغرب", timeMinutes: 19 * 60 + 58),
         Prayer(id: "isha",    name: "Isha",    arabic: "العشاء",  timeMinutes: 21 * 60 + 21),
     ]
+
+    static var all: [Prayer] { fallback }
+
+    static func dailyPrayers(from times: DailyPrayerTimes?) -> [Prayer] {
+        guard let times else { return fallback }
+        return [
+            Prayer(id: "fajr",    name: "Fajr",    arabic: "الفجر",  timeMinutes: times.fajr),
+            Prayer(id: "dhuhr",   name: "Dhuhr",   arabic: "الظهر",  timeMinutes: times.dhuhr),
+            Prayer(id: "asr",     name: "Asr",     arabic: "العصر",  timeMinutes: times.asr),
+            Prayer(id: "maghrib", name: "Maghrib", arabic: "المغرب", timeMinutes: times.maghrib),
+            Prayer(id: "isha",    name: "Isha",    arabic: "العشاء",  timeMinutes: times.isha),
+        ]
+    }
 }
 
 // MARK: - Display state
@@ -266,11 +279,11 @@ func fmtLeft(_ secs: Int) -> String {
     return h > 0 ? "\(h)h \(m)m" : "\(m)m"
 }
 
-func decoratePrayers(entries: [PrayerEntry], nowMin: Int) -> [PrayerViewModel] {
+func decoratePrayers(prayers: [Prayer], entries: [PrayerEntry], nowMin: Int) -> [PrayerViewModel] {
     var currentId: String? = nil
-    for p in Prayer.all where p.timeMinutes <= nowMin { currentId = p.id }
+    for p in prayers where p.timeMinutes <= nowMin { currentId = p.id }
 
-    return Prayer.all.map { prayer in
+    return prayers.map { prayer in
         if let entry = entries.first(where: { $0.prayerId == prayer.id }) {
             return PrayerViewModel(prayer: prayer, display: .prayed(madeUp: entry.madeUp))
         } else if prayer.timeMinutes > nowMin {
@@ -281,4 +294,8 @@ func decoratePrayers(entries: [PrayerEntry], nowMin: Int) -> [PrayerViewModel] {
             return PrayerViewModel(prayer: prayer, display: .missed)
         }
     }
+}
+
+func decoratePrayers(entries: [PrayerEntry], nowMin: Int) -> [PrayerViewModel] {
+    decoratePrayers(prayers: Prayer.fallback, entries: entries, nowMin: nowMin)
 }

@@ -9,12 +9,13 @@ struct SettingsTab: View {
     @Binding var remindersEnabled: Bool
     @Binding var accentRaw: String
     @Binding var showArabic: Bool
+    @ObservedObject var prayerTimeCache: PrayerTimeCache
+    @ObservedObject var citySearchService: CitySearchService
 
     @Query private var allEntries: [PrayerEntry]
 
     @State private var showDatePicker = false
-    @State private var showLocationInput = false
-    @State private var locationInput = ""
+    @State private var showCitySearch = false
 
     var body: some View {
         ZStack {
@@ -36,7 +37,6 @@ struct SettingsTab: View {
 
                     // Appearance
                     SettingSection(title: "Appearance", T: T) {
-                        // Accent picker
                         VStack(alignment: .leading, spacing: 12) {
                             Text("Accent color")
                                 .font(.system(size: 14, weight: .semibold))
@@ -71,7 +71,6 @@ struct SettingsTab: View {
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                         .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(T.line, lineWidth: 1))
 
-                        // Arabic names
                         ToggleRow(T: T, label: "Arabic names",
                                   detail: "Show Arabic script beside prayer names",
                                   value: $showArabic)
@@ -108,41 +107,134 @@ struct SettingsTab: View {
                         .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(T.line, lineWidth: 1))
                     }
 
-                    // Location
-                    SettingSection(title: "Location", T: T) {
-                        VStack(spacing: 0) {
-                            SettingRow(T: T, label: "Prayer times for",
-                                       detail: locationName) {
-                                locationInput = locationName
-                                withAnimation(.easeInOut(duration: 0.2)) {
-                                    showLocationInput.toggle()
+                    // Prayer Times
+                    SettingSection(title: "Prayer Times", T: T) {
+                        VStack(spacing: 10) {
+                            // Selected city row
+                            VStack(spacing: 0) {
+                                SettingRow(
+                                    T: T,
+                                    label: "City",
+                                    detail: prayerTimeCache.selectedLocation.map { "\($0.city), \($0.country)" } ?? "Not set"
+                                ) { showCitySearch = true }
+
+                                if let year = prayerTimeCache.cachedYear {
+                                    Divider().background(T.line)
+                                    HStack {
+                                        Text("Cached year")
+                                            .font(.system(size: 13))
+                                            .foregroundStyle(T.muted)
+                                        Spacer()
+                                        Text(String(year))
+                                            .font(.system(size: 13))
+                                            .foregroundStyle(T.faint)
+                                    }
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 10)
+                                }
+
+                                if let lastDate = prayerTimeCache.lastDownloadDate {
+                                    Divider().background(T.line)
+                                    HStack {
+                                        Text("Last updated")
+                                            .font(.system(size: 13))
+                                            .foregroundStyle(T.muted)
+                                        Spacer()
+                                        Text(fmtDateTime(lastDate))
+                                            .font(.system(size: 13))
+                                            .foregroundStyle(T.faint)
+                                    }
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 10)
                                 }
                             }
-                            if showLocationInput {
-                                Divider().background(T.line)
-                                VStack(alignment: .leading, spacing: 8) {
-                                    TextField("City name", text: $locationInput)
-                                        .font(.system(size: 14))
-                                        .padding(10)
-                                        .background(T.cardSub)
-                                        .clipShape(RoundedRectangle(cornerRadius: 8))
-                                        .overlay(RoundedRectangle(cornerRadius: 8)
-                                            .strokeBorder(T.line, lineWidth: 1))
-                                        .onSubmit {
-                                            locationName = locationInput
-                                            showLocationInput = false
-                                        }
-                                    Text("GPS-based times will be available in a future update.")
-                                        .font(.system(size: 12))
-                                        .foregroundStyle(T.faint)
+                            .background(T.card)
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                            .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(T.line, lineWidth: 1))
+
+                            // Calculation method picker
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text("Calculation method")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundStyle(T.text)
+                                Picker("Method", selection: $prayerTimeCache.calculationMethod) {
+                                    Text("Muslim World League").tag(3)
+                                    Text("ISNA").tag(2)
+                                    Text("Egyptian GA").tag(5)
+                                    Text("Umm al-Qura").tag(4)
+                                    Text("Gulf Region").tag(8)
+                                    Text("Kuwait").tag(9)
+                                    Text("Qatar").tag(10)
+                                    Text("Singapore / MUIS").tag(11)
+                                    Text("Turkey / Diyanet").tag(13)
                                 }
-                                .padding(12)
+                                .pickerStyle(.menu)
+                                .tint(T.primary)
                             }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(14)
+                            .background(T.card)
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                            .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(T.line, lineWidth: 1))
+
+                            // Asr school picker
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text("Asr calculation school")
+                                    .font(.system(size: 14, weight: .semibold))
+                                    .foregroundStyle(T.text)
+                                Picker("School", selection: $prayerTimeCache.school) {
+                                    Text("Standard (Shafi'i / Maliki / Hanbali)").tag(0)
+                                    Text("Hanafi").tag(1)
+                                }
+                                .pickerStyle(.menu)
+                                .tint(T.primary)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(14)
+                            .background(T.card)
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                            .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(T.line, lineWidth: 1))
+
+                            // Refresh button
+                            Button(action: refreshTimes) {
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Refresh prayer times")
+                                            .font(.system(size: 14, weight: .semibold))
+                                            .foregroundStyle(prayerTimeCache.selectedLocation != nil ? T.text : T.muted)
+                                        Text(prayerTimeCache.isDownloading ? "Downloading…" : "Re-download full year of prayer times")
+                                            .font(.system(size: 13))
+                                            .foregroundStyle(T.muted)
+                                    }
+                                    Spacer()
+                                    if prayerTimeCache.isDownloading {
+                                        ProgressView()
+                                            .tint(T.primary)
+                                            .scaleEffect(0.8)
+                                    } else {
+                                        Image(systemName: "arrow.clockwise.circle")
+                                            .font(.system(size: 20))
+                                            .foregroundStyle(prayerTimeCache.selectedLocation != nil ? T.primary : T.faint)
+                                    }
+                                }
+                                .padding(14)
+                                .background(T.card)
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
+                                .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(T.line, lineWidth: 1))
+                            }
+                            .buttonStyle(ScaleButtonStyle(scale: 0.98))
+                            .disabled(prayerTimeCache.selectedLocation == nil || prayerTimeCache.isDownloading)
+
+                            // Disclaimer
+                            Text("Prayer times are calculated estimates from your selected city. Please follow your local mosque timetable where required.")
+                                .font(.system(size: 12))
+                                .foregroundStyle(T.faint)
+                                .lineSpacing(3)
+                                .padding(.top, 2)
                         }
-                        .background(T.card)
-                        .clipShape(RoundedRectangle(cornerRadius: 14))
-                        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(T.line, lineWidth: 1))
                     }
+                    .onChange(of: prayerTimeCache.calculationMethod) { _, _ in triggerRedownload() }
+                    .onChange(of: prayerTimeCache.school)             { _, _ in triggerRedownload() }
 
                     // Notifications
                     SettingSection(title: "Notifications", T: T) {
@@ -210,6 +302,14 @@ struct SettingsTab: View {
                 .padding(.top, 16)
             }
         }
+        .sheet(isPresented: $showCitySearch) {
+            CitySearchSheet(
+                T: T,
+                citySearchService: citySearchService,
+                prayerTimeCache: prayerTimeCache,
+                locationName: $locationName
+            ) { showCitySearch = false }
+        }
     }
 
     private func fmtDate(_ dayKey: String) -> String {
@@ -221,10 +321,39 @@ struct SettingsTab: View {
         return disp.string(from: date)
     }
 
+    private func fmtDateTime(_ date: Date) -> String {
+        let fmt = DateFormatter()
+        fmt.dateStyle = .short
+        fmt.timeStyle = .short
+        return fmt.string(from: date)
+    }
+
     private func parseDate(_ s: String) -> Date {
         let fmt = DateFormatter()
         fmt.dateFormat = "yyyy-MM-dd"
         return fmt.date(from: s) ?? Date()
+    }
+
+    private func triggerRedownload() {
+        guard let loc = prayerTimeCache.selectedLocation else { return }
+        Task {
+            await prayerTimeCache.clearAndRedownload(
+                location: loc,
+                method: prayerTimeCache.calculationMethod,
+                school: prayerTimeCache.school
+            )
+        }
+    }
+
+    private func refreshTimes() {
+        guard let loc = prayerTimeCache.selectedLocation else { return }
+        Task {
+            await prayerTimeCache.clearAndRedownload(
+                location: loc,
+                method: prayerTimeCache.calculationMethod,
+                school: prayerTimeCache.school
+            )
+        }
     }
 
     private func shareCSV() {
@@ -236,6 +365,149 @@ struct SettingsTab: View {
               let root = scene.windows.first?.rootViewController else { return }
         let vc = UIActivityViewController(activityItems: [url], applicationActivities: nil)
         root.present(vc, animated: true)
+    }
+}
+
+// MARK: - City Search Sheet
+
+struct CitySearchSheet: View {
+    let T: AppTheme
+    @ObservedObject var citySearchService: CitySearchService
+    @ObservedObject var prayerTimeCache: PrayerTimeCache
+    @Binding var locationName: String
+    let onDismiss: () -> Void
+
+    @State private var isResolving = false
+    @State private var resolveError: String? = nil
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                T.page.ignoresSafeArea()
+                VStack(alignment: .leading, spacing: 0) {
+                    // Search field
+                    HStack(spacing: 8) {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundStyle(T.muted)
+                        TextField("Search city", text: Binding(
+                            get: { citySearchService.query },
+                            set: { citySearchService.updateQuery($0) }
+                        ))
+                        .autocorrectionDisabled()
+                        .textInputAutocapitalization(.words)
+                        .onAppear { citySearchService.updateQuery("") }
+                        if !citySearchService.query.isEmpty {
+                            Button { citySearchService.updateQuery("") } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundStyle(T.muted)
+                            }
+                        }
+                    }
+                    .padding(13)
+                    .background(T.card)
+                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .overlay(RoundedRectangle(cornerRadius: 12).strokeBorder(T.line, lineWidth: 1))
+                    .padding(.horizontal, 18)
+                    .padding(.top, 16)
+
+                    // Results
+                    if !citySearchService.results.isEmpty && !citySearchService.query.isEmpty {
+                        ScrollView {
+                            VStack(spacing: 0) {
+                                let capped = Array(citySearchService.results.prefix(10))
+                                ForEach(Array(capped.enumerated()), id: \.element.id) { idx, result in
+                                    Button { selectCity(result) } label: {
+                                        HStack(spacing: 12) {
+                                            Image(systemName: "mappin")
+                                                .font(.system(size: 13))
+                                                .foregroundStyle(T.muted)
+                                            VStack(alignment: .leading, spacing: 1) {
+                                                Text(result.title)
+                                                    .font(.system(size: 14, weight: .semibold))
+                                                    .foregroundStyle(T.text)
+                                                    .lineLimit(1)
+                                                if !result.subtitle.isEmpty {
+                                                    Text(result.subtitle)
+                                                        .font(.system(size: 12))
+                                                        .foregroundStyle(T.muted)
+                                                        .lineLimit(1)
+                                                }
+                                            }
+                                            Spacer()
+                                        }
+                                        .padding(.horizontal, 18)
+                                        .padding(.vertical, 12)
+                                    }
+                                    .buttonStyle(.plain)
+                                    if idx < capped.count - 1 {
+                                        Divider().background(T.line).padding(.horizontal, 18)
+                                    }
+                                }
+                            }
+                        }
+                        .padding(.top, 8)
+                    }
+
+                    // Loading
+                    if isResolving || prayerTimeCache.isDownloading {
+                        HStack(spacing: 8) {
+                            ProgressView().tint(T.primary).scaleEffect(0.8)
+                            Text(isResolving ? "Finding city…" : "Downloading prayer times…")
+                                .font(.system(size: 13))
+                                .foregroundStyle(T.muted)
+                        }
+                        .padding(.horizontal, 18)
+                        .padding(.top, 12)
+                    }
+
+                    // Error
+                    if let err = resolveError {
+                        Text(err)
+                            .font(.system(size: 13))
+                            .foregroundStyle(T.amber)
+                            .padding(.horizontal, 18)
+                            .padding(.top, 8)
+                    }
+
+                    Spacer()
+                }
+            }
+            .navigationTitle("Choose City")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
+                        citySearchService.updateQuery("")
+                        onDismiss()
+                    }
+                }
+            }
+        }
+    }
+
+    private func selectCity(_ result: CitySearchResult) {
+        isResolving = true
+        resolveError = nil
+        citySearchService.updateQuery("")
+
+        Task {
+            do {
+                let location = try await citySearchService.resolve(result)
+                prayerTimeCache.saveSelectedLocation(location)
+                locationName = "\(location.city), \(location.country)"
+                isResolving = false
+
+                await prayerTimeCache.clearAndRedownload(
+                    location: location,
+                    method: prayerTimeCache.calculationMethod,
+                    school: prayerTimeCache.school
+                )
+                onDismiss()
+            } catch {
+                isResolving = false
+                resolveError = "Couldn't find city. Please try a different search."
+            }
+        }
     }
 }
 

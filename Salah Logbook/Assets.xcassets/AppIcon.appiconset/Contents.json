@@ -1,6 +1,7 @@
 {
   "images" : [
     {
+      "filename" : "SalahLogbook-AppIcon-1024.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -12,6 +13,7 @@
           "value" : "dark"
         }
       ],
+      "filename" : "ChatGPT Image Jun 7, 2026, 01_09_54 AM.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"

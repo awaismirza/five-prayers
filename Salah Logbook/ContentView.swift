@@ -11,6 +11,9 @@ struct ContentView: View {
     @AppStorage("locationName")     private var locationName    = "Your City"
     @AppStorage("remindersEnabled") private var remindersEnabled = true
 
+    @StateObject private var citySearchService = CitySearchService()
+    @StateObject private var prayerTimeCache   = PrayerTimeCache()
+
     private var accent: AccentColor { AccentColor(rawValue: accentRaw) ?? .emerald }
     private var T: AppTheme { AppTheme.make(dark: colorScheme == .dark, accent: accent) }
 
@@ -20,11 +23,13 @@ struct ContentView: View {
                 T: T,
                 trackingStart: $trackingStart,
                 locationName: $locationName,
-                remindersEnabled: $remindersEnabled
+                remindersEnabled: $remindersEnabled,
+                citySearchService: citySearchService,
+                prayerTimeCache: prayerTimeCache
             ) { onboardingDone = true }
         } else {
             TabView {
-                HomeTab(T: T, showArabic: showArabic)
+                HomeTab(T: T, showArabic: showArabic, prayerTimeCache: prayerTimeCache)
                     .tabItem { Label("Home", systemImage: "house.fill") }
 
                 AnalyticsTab(T: T, trackingStart: trackingStart)
@@ -36,11 +41,17 @@ struct ContentView: View {
                     locationName: $locationName,
                     remindersEnabled: $remindersEnabled,
                     accentRaw: $accentRaw,
-                    showArabic: $showArabic
+                    showArabic: $showArabic,
+                    prayerTimeCache: prayerTimeCache,
+                    citySearchService: citySearchService
                 )
                 .tabItem { Label("Settings", systemImage: "gearshape.fill") }
             }
             .tint(T.primary)
+            .task {
+                prayerTimeCache.load()
+                await prayerTimeCache.checkAndRedownloadIfNeeded()
+            }
         }
     }
 }

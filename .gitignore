@@ -1,0 +1,71 @@
+# macOS
+*.DS_Store
+.DS_Store
+
+
+
+# Xcode
+build/
+DerivedData/
+*.xcworkspace/xcuserdata/
+xcuserdata/
+*.xcuserdatad/
+*.xcuserstate
+
+*.xcbkptlist
+*.xcbkplist
+
+# SwiftPM
+.build/
+.swiftpm/
+
+
+# Xcode user-specific
+**/xcuserdata/
+**/*.xcuserstate
+**/*.xccheckout
+**/*.xcscmblueprint
+**/*.xcbkptlist
+
+# Build artifacts
+DerivedData/
+build/
+*.moved-aside
+*.ipa
+*.dSYM
+*.dSYM.zip
+
+# Swift Package Manager
+.build/
+.swiftpm/
+# Keep lockfile for reproducible builds (for apps)
+!**/Package.resolved
+
+# CocoaPods (if used)
+Pods/
+
+# Carthage (if used)
+Carthage/Build/
+
+# fastlane (if used)
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output/
+
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+#misc
+
+test_decode.bin
+RideTrack.xcodeproj/project.xcworkspace/xcshareddata/
+
+# Claude / AI tool outputs (generated caches, not source)
+graphify-out/
+.claude/settings.local.json
+.claude/

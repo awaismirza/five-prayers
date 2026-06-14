@@ -1,4 +1,4 @@
-# Salah Logbook — Project Spec
+#  Five Prayers — Project Spec
 
 ## Overview
 

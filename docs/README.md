@@ -1,4 +1,4 @@
-# Salah Logbook — Product Website
+# Five Prayers — Product Website
 
 Static website for [Salah Logbook](https://salahlogbook.app), a privacy-first iOS prayer tracking app.
 

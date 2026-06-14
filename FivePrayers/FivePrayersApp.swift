@@ -1,6 +1,6 @@
 //
-//  Salah_LogbookApp.swift
-//  Salah Logbook
+//  FivePrayersApp.swift
+//  Five Prayers
 //
 //  Created by mohr on 5/6/2026.
 //
@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct Salah_LogbookApp: App {
+struct FivePrayersApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             PrayerEntry.self,

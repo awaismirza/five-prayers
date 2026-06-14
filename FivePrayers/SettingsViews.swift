@@ -17,6 +17,13 @@ struct SettingsTab: View {
     @State private var showDatePicker = false
     @State private var showCitySearch = false
 
+    @Environment(\.openURL) private var openURL
+
+    private let websiteURL = URL(string: "https://awaismirza.github.io/five-prayers")!
+    private let supportURL = URL(string: "https://awaismirza.github.io/five-prayers/#support")!
+    private let termsURL = URL(string: "https://awaismirza.github.io/five-prayers/#terms")!
+    private let privacyURL = URL(string: "https://awaismirza.github.io/five-prayers/#privacy")!
+
     var body: some View {
         ZStack {
             T.page.ignoresSafeArea()
@@ -271,7 +278,7 @@ struct SettingsTab: View {
                     // About
                     SettingSection(title: "About", T: T) {
                         VStack(alignment: .leading, spacing: 6) {
-                            Text("Your Prayers")
+                            Text("Five Prayers")
                                 .font(.system(size: 14, weight: .semibold))
                                 .foregroundStyle(T.text)
                             Text("A gentle daily reminder to stay connected to your five prayers. Track your journey with consistency, not perfection.")
@@ -284,6 +291,33 @@ struct SettingsTab: View {
                                 .padding(.top, 2)
                         }
                         .padding(14)
+                        .background(T.card)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(T.line, lineWidth: 1))
+                    }
+
+                    SettingSection(title: "Links", T: T) {
+                        VStack(spacing: 0) {
+                            SettingRow(T: T, label: "Website",
+                                       detail: "Open the product website") {
+                                openURL(websiteURL)
+                            }
+                            Divider().background(T.line)
+                            SettingRow(T: T, label: "Support",
+                                       detail: "Open support") {
+                                openURL(supportURL)
+                            }
+                            Divider().background(T.line)
+                            SettingRow(T: T, label: "Terms & Conditions",
+                                       detail: "Open terms and conditions") {
+                                openURL(termsURL)
+                            }
+                            Divider().background(T.line)
+                            SettingRow(T: T, label: "Privacy Policy",
+                                       detail: "Open privacy policy") {
+                                openURL(privacyURL)
+                            }
+                        }
                         .background(T.card)
                         .clipShape(RoundedRectangle(cornerRadius: 14))
                         .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(T.line, lineWidth: 1))

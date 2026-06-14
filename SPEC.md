@@ -22,8 +22,8 @@ A native iOS app (SwiftUI + SwiftData) for tracking the five daily Islamic praye
 ## File Structure
 
 ```
-Salah Logbook/
-├── Salah_LogbookApp.swift      — App entry, SwiftData schema
+FivePrayers/
+├── FivePrayersApp.swift        — App entry, SwiftData schema
 ├── Item.swift                  — PrayerEntry model, Prayer data, AppTheme, AccentColor,
 │                                 PrayerStats, helpers (fmtClock, decoratePrayers, buildCSV…)
 ├── ContentView.swift           — Root shell: onboarding gate + TabView

@@ -7,26 +7,26 @@
 	objects = {
 
 /* Begin PBXFileReference section */
-		594A99782FD248F900582B91 /* Salah Logbook.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Salah Logbook.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		594A99782FD248F900582B91 /* FivePrayers.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FivePrayers.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		594A99852FD248FA00582B91 /* Exceptions for "Salah Logbook" folder in "Salah Logbook" target */ = {
+		594A99852FD248FA00582B91 /* Exceptions for "FivePrayers" folder in "FivePrayers" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 594A99772FD248F900582B91 /* Salah Logbook */;
+			target = 594A99772FD248F900582B91 /* FivePrayers */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		594A997A2FD248F900582B91 /* Salah Logbook */ = {
+		594A997A2FD248F900582B91 /* FivePrayers */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				594A99852FD248FA00582B91 /* Exceptions for "Salah Logbook" folder in "Salah Logbook" target */,
+				594A99852FD248FA00582B91 /* Exceptions for "FivePrayers" folder in "FivePrayers" target */,
 			);
-			path = "Salah Logbook";
+			path = FivePrayers;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -45,7 +45,7 @@
 		594A996F2FD248F900582B91 = {
 			isa = PBXGroup;
 			children = (
-				594A997A2FD248F900582B91 /* Salah Logbook */,
+				594A997A2FD248F900582B91 /* FivePrayers */,
 				594A99792FD248F900582B91 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -53,7 +53,7 @@
 		594A99792FD248F900582B91 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				594A99782FD248F900582B91 /* Salah Logbook.app */,
+				594A99782FD248F900582B91 /* FivePrayers.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -61,9 +61,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		594A99772FD248F900582B91 /* Salah Logbook */ = {
+		594A99772FD248F900582B91 /* FivePrayers */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 594A99862FD248FA00582B91 /* Build configuration list for PBXNativeTarget "Salah Logbook" */;
+			buildConfigurationList = 594A99862FD248FA00582B91 /* Build configuration list for PBXNativeTarget "FivePrayers" */;
 			buildPhases = (
 				594A99742FD248F900582B91 /* Sources */,
 				594A99752FD248F900582B91 /* Frameworks */,
@@ -74,13 +74,13 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				594A997A2FD248F900582B91 /* Salah Logbook */,
+				594A997A2FD248F900582B91 /* FivePrayers */,
 			);
-			name = "Salah Logbook";
+			name = FivePrayers;
 			packageProductDependencies = (
 			);
-			productName = "Salah Logbook";
-			productReference = 594A99782FD248F900582B91 /* Salah Logbook.app */;
+			productName = FivePrayers;
+			productReference = 594A99782FD248F900582B91 /* FivePrayers.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -98,7 +98,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 594A99732FD248F900582B91 /* Build configuration list for PBXProject "Salah Logbook" */;
+			buildConfigurationList = 594A99732FD248F900582B91 /* Build configuration list for PBXProject "FivePrayers" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -112,7 +112,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				594A99772FD248F900582B91 /* Salah Logbook */,
+				594A99772FD248F900582B91 /* FivePrayers */,
 			);
 		};
 /* End PBXProject section */
@@ -143,13 +143,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "Salah Logbook/Salah_Logbook.entitlements";
+				CODE_SIGN_ENTITLEMENTS = FivePrayers/FivePrayers.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = APFM7SNP9X;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Salah Logbook/Info.plist";
+				INFOPLIST_FILE = FivePrayers/Info.plist;
+				INFOPLIST_KEY_CFBundleName = FivePrayers;
 				INFOPLIST_KEY_CFBundleDisplayName = "Five Prayers";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -164,7 +165,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.awaisjamil.Five-Prayers";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = FivePrayers;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -184,13 +185,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = "Salah Logbook/Salah_Logbook.entitlements";
+				CODE_SIGN_ENTITLEMENTS = FivePrayers/FivePrayers.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = APFM7SNP9X;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = "Salah Logbook/Info.plist";
+				INFOPLIST_FILE = FivePrayers/Info.plist;
+				INFOPLIST_KEY_CFBundleName = FivePrayers;
 				INFOPLIST_KEY_CFBundleDisplayName = "Five Prayers";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -205,7 +207,7 @@
 				);
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.awaisjamil.Five-Prayers";
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = FivePrayers;
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
@@ -344,7 +346,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		594A99732FD248F900582B91 /* Build configuration list for PBXProject "Salah Logbook" */ = {
+		594A99732FD248F900582B91 /* Build configuration list for PBXProject "FivePrayers" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				594A99892FD248FA00582B91 /* Debug */,
@@ -353,7 +355,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		594A99862FD248FA00582B91 /* Build configuration list for PBXNativeTarget "Salah Logbook" */ = {
+		594A99862FD248FA00582B91 /* Build configuration list for PBXNativeTarget "FivePrayers" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				594A99872FD248FA00582B91 /* Debug */,

@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="1664" viewBox="0 0 768 1664" fill="none">
+  <rect width="768" height="1664" fill="#F4EFE4"/>
+  <rect x="274" y="24" width="220" height="64" rx="32" fill="#050505"/>
+  <text x="84" y="95" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">2:17</text>
+  <text x="32" y="160" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="600">Your journey</text>
+  <text x="32" y="203" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800">Tracking since Jun 14</text>
+  <text x="32" y="240" fill="#A4ACA7" font-family="Arial, Helvetica, sans-serif" font-size="28">today</text>
+
+  <defs>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#E5DED0" flood-opacity="0.95"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <rect x="32" y="282" width="343" height="114" rx="32" fill="#FFFFFF"/>
+    <rect x="393" y="282" width="343" height="114" rx="32" fill="#FFFFFF"/>
+    <rect x="32" y="422" width="343" height="114" rx="32" fill="#FFFFFF"/>
+    <rect x="393" y="422" width="343" height="114" rx="32" fill="#FFFFFF"/>
+  </g>
+
+  <path d="M66 334c0-13 10-23 23-23 10 0 19 6 22 16 2 6 1 13-2 18-3 5-8 10-14 12-9 3-20 1-27-5-7-7-10-18-7-28Z" fill="#FF8A26"/>
+  <path d="M77 338c0-8 4-15 10-19-1 3-1 6-1 9 0 10 8 18 18 18 1 0 3 0 4-1-4 8-12 13-21 13-6 0-10-2-14-6-4-4-6-9-6-14Z" fill="#FFF5EC"/>
+  <text x="122" y="324" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="600">Current Streak</text>
+  <text x="122" y="365" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="800">0</text>
+  <text x="149" y="365" fill="#A4ACA7" font-family="Arial, Helvetica, sans-serif" font-size="20">days</text>
+
+  <path d="M438 321l10 22 24 2-18 15 5 23-21-12-21 12 5-23-18-15 24-2 10-22Z" fill="#E2B422"/>
+  <text x="481" y="324" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="600">Longest Streak</text>
+  <text x="481" y="365" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="800">0</text>
+  <text x="508" y="365" fill="#A4ACA7" font-family="Arial, Helvetica, sans-serif" font-size="20">days</text>
+
+  <circle cx="80" cy="478" r="18" fill="#48A776"/>
+  <path d="M72 478l6 6 10-14" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="122" y="461" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="600">Completion</text>
+  <text x="122" y="502" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="800">0</text>
+  <text x="149" y="502" fill="#A4ACA7" font-family="Arial, Helvetica, sans-serif" font-size="20">%</text>
+
+  <circle cx="438" cy="478" r="19" fill="#0F6A55"/>
+  <path d="M438 466v12h-10" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="481" y="461" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="600">On-Time</text>
+  <text x="481" y="502" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="800">0</text>
+  <text x="508" y="502" fill="#A4ACA7" font-family="Arial, Helvetica, sans-serif" font-size="20">%</text>
+
+  <text x="32" y="615" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="800">Consistency by prayer</text>
+
+  <g filter="url(#shadow)">
+    <rect x="32" y="647" width="704" height="137" rx="30" fill="#FFFFFF"/>
+    <rect x="32" y="804" width="704" height="137" rx="30" fill="#FFFFFF"/>
+    <rect x="32" y="961" width="704" height="137" rx="30" fill="#FFFFFF"/>
+    <rect x="32" y="1118" width="704" height="137" rx="30" fill="#FFFFFF"/>
+    <rect x="32" y="1275" width="704" height="137" rx="30" fill="#FFFFFF"/>
+  </g>
+
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="56" y="690" fill="#202728" font-size="28" font-weight="700">Fajr</text>
+    <text x="626" y="690" fill="#7B8580" font-size="24">0 logged</text>
+    <rect x="56" y="713" width="688" height="10" rx="5" fill="#F5F3EF"/>
+    <text x="56" y="754" fill="#A4ACA7" font-size="22">0% on-time</text>
+
+    <text x="56" y="847" fill="#202728" font-size="28" font-weight="700">Dhuhr</text>
+    <text x="626" y="847" fill="#7B8580" font-size="24">0 logged</text>
+    <rect x="56" y="870" width="688" height="10" rx="5" fill="#F5F3EF"/>
+    <text x="56" y="911" fill="#A4ACA7" font-size="22">0% on-time</text>
+
+    <text x="56" y="1004" fill="#202728" font-size="28" font-weight="700">Asr</text>
+    <text x="626" y="1004" fill="#7B8580" font-size="24">0 logged</text>
+    <rect x="56" y="1027" width="688" height="10" rx="5" fill="#F5F3EF"/>
+    <text x="56" y="1068" fill="#A4ACA7" font-size="22">0% on-time</text>
+
+    <text x="56" y="1161" fill="#202728" font-size="28" font-weight="700">Maghrib</text>
+    <text x="626" y="1161" fill="#7B8580" font-size="24">0 logged</text>
+    <rect x="56" y="1184" width="688" height="10" rx="5" fill="#F5F3EF"/>
+    <text x="56" y="1225" fill="#A4ACA7" font-size="22">0% on-time</text>
+
+    <text x="56" y="1318" fill="#202728" font-size="28" font-weight="700">Isha</text>
+    <text x="626" y="1318" fill="#7B8580" font-size="24">0 logged</text>
+    <rect x="56" y="1341" width="688" height="10" rx="5" fill="#F5F3EF"/>
+    <text x="56" y="1382" fill="#A4ACA7" font-size="22">0% on-time</text>
+  </g>
+
+  <text x="32" y="1500" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="800">Breakdown</text>
+  <rect x="32" y="1529" width="704" height="103" rx="30" fill="#FFFFFF" filter="url(#shadow)"/>
+  <rect x="145" y="1523" width="479" height="108" rx="54" fill="#FEFBF4"/>
+  <rect x="302" y="1529" width="165" height="96" rx="48" fill="#E3DED3"/>
+  <path d="M210 1573l22-19 22 19v28h-44v-28Z" fill="none" stroke="#161310" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M219 1569l13-12 13 12" stroke="#161310" stroke-width="4" stroke-linecap="round"/>
+  <rect x="226" y="1582" width="11" height="13" fill="#161310" rx="2"/>
+  <text x="208" y="1610" fill="#161310" font-family="Arial, Helvetica, sans-serif" font-size="18">Home</text>
+  <rect x="360" y="1558" width="12" height="26" rx="3" fill="#0F6A55"/><rect x="378" y="1552" width="12" height="32" rx="3" fill="#0F6A55"/><rect x="396" y="1546" width="12" height="38" rx="3" fill="#0F6A55"/>
+  <text x="344" y="1610" fill="#0F6A55" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700">Analytics</text>
+  <circle cx="532" cy="1565" r="16" stroke="#161310" stroke-width="6" fill="none"/>
+  <circle cx="532" cy="1565" r="4" fill="#161310"/>
+  <path d="M532 1539v10M532 1581v10M506 1565h10M548 1565h10M515 1548l7 7M542 1575l7 7M515 1582l7-7M542 1555l7-7" stroke="#161310" stroke-width="4" stroke-linecap="round"/>
+  <text x="497" y="1610" fill="#161310" font-family="Arial, Helvetica, sans-serif" font-size="18">Settings</text>
+</svg>

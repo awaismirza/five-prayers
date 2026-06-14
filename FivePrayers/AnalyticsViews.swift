@@ -142,8 +142,8 @@ struct StatCard: View {
         .background(T.card)
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(T.line, lineWidth: 1))
-        .shadow(color: T.dark ? .black.opacity(0.28) : Color(hex: "14281E").opacity(0.06),
-                radius: 8, x: 0, y: 3)
+        .shadow(color: T.dark ? .black.opacity(0.24) : .black.opacity(0.08),
+            radius: 16, x: 0, y: 10)
     }
 }
 
@@ -157,7 +157,7 @@ struct PrayerBreakdownRow: View {
     private var barColor: Color {
         stat.onTimeRate >= 80 ? T.prayed
         : stat.onTimeRate >= 50 ? T.amber
-        : Color(hex: "E8A99D")
+        : Color(hex: "E06767")
     }
 
     var body: some View {
@@ -196,8 +196,8 @@ struct PrayerBreakdownRow: View {
         .background(T.card)
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(T.line, lineWidth: 1))
-        .shadow(color: T.dark ? .black.opacity(0.28) : Color(hex: "14281E").opacity(0.06),
-                radius: 8, x: 0, y: 3)
+        .shadow(color: T.dark ? .black.opacity(0.24) : .black.opacity(0.08),
+            radius: 16, x: 0, y: 10)
     }
 }
 
@@ -224,7 +224,7 @@ struct BreakdownCard: View {
         .background(T.card)
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .overlay(RoundedRectangle(cornerRadius: 16).strokeBorder(T.line, lineWidth: 1))
-        .shadow(color: T.dark ? .black.opacity(0.28) : Color(hex: "14281E").opacity(0.06),
-                radius: 8, x: 0, y: 3)
+        .shadow(color: T.dark ? .black.opacity(0.24) : .black.opacity(0.08),
+            radius: 16, x: 0, y: 10)
     }
 }

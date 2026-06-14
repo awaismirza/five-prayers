@@ -104,31 +104,31 @@ struct AppTheme {
         struct Pal { let lp, ld, dp, dd: String }
         let pal: Pal
         switch accent {
-        case .emerald: pal = Pal(lp: "14705E", ld: "0C4A3E", dp: "4ECBA5", dd: "0F2C26")
-        case .teal:    pal = Pal(lp: "0E7490", ld: "0A4D60", dp: "41C2DE", dd: "0C2A33")
-        case .pine:    pal = Pal(lp: "2C6E55", ld: "1C4A39", dp: "5BC79E", dd: "12281F")
+        case .emerald: pal = Pal(lp: "0F7A66", ld: "0B5B4D", dp: "44D0AA", dd: "0D2A24")
+        case .teal:    pal = Pal(lp: "117A8B", ld: "0B5561", dp: "53C9DB", dd: "0D2830")
+        case .pine:    pal = Pal(lp: "2E6B57", ld: "214B3E", dp: "66C6A1", dd: "12241E")
         }
         if !dark {
             return AppTheme(
-                dark: false, page: Color(hex: "F5F3ED"), card: .white,
-                cardSub: Color(hex: "FBFAF6"), line: Color(hex: "141C1A").opacity(0.07),
+                dark: false, page: Color(hex: "F4F5F7"), card: Color.white,
+                cardSub: Color(hex: "EEF1F4"), line: Color.black.opacity(0.07),
                 primary: Color(hex: pal.lp), primaryDeep: Color(hex: pal.ld), onPrimary: .white,
                 heroFrom: Color(hex: pal.lp), heroTo: Color(hex: pal.ld),
-                prayed: Color(hex: "3E9E6F"), prayedSoft: Color(hex: "E7F2EA"), prayedOn: Color(hex: "2C7E54"),
-                amber: Color(hex: "C98A2E"), amberSoft: Color(hex: "F8EFDC"), amberOn: Color(hex: "9A6916"),
-                text: Color(hex: "23282A"), muted: Color(hex: "7C8682"),
-                faint: Color(hex: "A8B0AC"), idleRing: Color(hex: "D7DCD7")
+                prayed: Color(hex: "1E9E64"), prayedSoft: Color(hex: "EDF8F2"), prayedOn: Color(hex: "16784A"),
+                amber: Color(hex: "D48A1F"), amberSoft: Color(hex: "FFF5E8"), amberOn: Color(hex: "9A6210"),
+                text: Color(hex: "111315"), muted: Color(hex: "66707A"),
+                faint: Color(hex: "9AA3AD"), idleRing: Color(hex: "D7DDE3")
             )
         }
         return AppTheme(
-            dark: true, page: Color(hex: "0E1513"), card: Color(hex: "18211E"),
-            cardSub: Color(hex: "141C1A"), line: Color.white.opacity(0.07),
-            primary: Color(hex: pal.dp), primaryDeep: Color(hex: pal.dd), onPrimary: Color(hex: "06140F"),
-            heroFrom: Color(hex: pal.dd), heroTo: Color(hex: "0A1714"),
-            prayed: Color(hex: "5FC98C"), prayedSoft: Color(hex: "5FC98C").opacity(0.13), prayedOn: Color(hex: "7AD3A0"),
-            amber: Color(hex: "E0A64A"), amberSoft: Color(hex: "E0A64A").opacity(0.14), amberOn: Color(hex: "E9B968"),
-            text: Color(hex: "ECEFEC"), muted: Color(hex: "8FA09A"),
-            faint: Color(hex: "5E6E68"), idleRing: Color(hex: "34403B")
+            dark: true, page: Color(hex: "090A0B"), card: Color(hex: "15171A"),
+            cardSub: Color(hex: "1C1F23"), line: Color.white.opacity(0.08),
+            primary: Color(hex: pal.dp), primaryDeep: Color(hex: pal.dd), onPrimary: Color(hex: "07120F"),
+            heroFrom: Color(hex: "14181B"), heroTo: Color(hex: "0B0C0E"),
+            prayed: Color(hex: "63D398"), prayedSoft: Color(hex: "63D398").opacity(0.14), prayedOn: Color(hex: "89E0B4"),
+            amber: Color(hex: "F0B252"), amberSoft: Color(hex: "F0B252").opacity(0.14), amberOn: Color(hex: "F7C36F"),
+            text: Color(hex: "F4F5F6"), muted: Color(hex: "95A0AA"),
+            faint: Color(hex: "69727C"), idleRing: Color(hex: "353A41")
         )
     }
 

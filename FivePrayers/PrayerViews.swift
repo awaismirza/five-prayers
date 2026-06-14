@@ -254,7 +254,7 @@ struct HeroView: View {
             )
         )
         .clipShape(RoundedRectangle(cornerRadius: 28))
-        .shadow(color: Color(hex: "082820").opacity(0.22), radius: 15, x: 0, y: 10)
+        .shadow(color: T.dark ? .black.opacity(0.36) : .black.opacity(0.12), radius: 24, x: 0, y: 16)
     }
 
     @ViewBuilder
@@ -302,7 +302,7 @@ struct HeroView: View {
             .padding(13)
             .background(Color.white)
             .clipShape(RoundedRectangle(cornerRadius: 16))
-            .shadow(color: .black.opacity(0.14), radius: 6, x: 0, y: 3)
+            .shadow(color: .black.opacity(0.1), radius: 14, x: 0, y: 8)
         }
         .buttonStyle(ScaleButtonStyle(scale: 0.97))
     }
@@ -335,8 +335,8 @@ struct HeaderView: View {
                     .fill(T.card)
                     .overlay(Circle().strokeBorder(T.line, lineWidth: 1))
                     .shadow(
-                        color: T.dark ? .black.opacity(0.3) : Color(hex: "14281E").opacity(0.06),
-                        radius: 4, x: 0, y: 2
+                        color: T.dark ? .black.opacity(0.32) : .black.opacity(0.08),
+                        radius: 10, x: 0, y: 6
                     )
                 Image(systemName: "person")
                     .font(.system(size: 18, weight: .regular))
@@ -472,8 +472,8 @@ struct PrayerRowView: View {
                 }
             )
             .shadow(
-                color: T.dark ? .black.opacity(0.32) : Color(hex: "14281E").opacity(0.06),
-                radius: 9, x: 0, y: 4
+                color: T.dark ? .black.opacity(0.26) : .black.opacity(0.08),
+                radius: 16, x: 0, y: 10
             )
         }
         .buttonStyle(ScaleButtonStyle(scale: 0.985))

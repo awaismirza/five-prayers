@@ -1,78 +1,88 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="768" height="1664" viewBox="0 0 768 1664" fill="none">
-  <rect width="768" height="1664" fill="#F4EFE4"/>
-  <rect x="274" y="24" width="220" height="64" rx="32" fill="#050505"/>
-  <text x="84" y="95" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">2:17</text>
-  <text x="32" y="160" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="600">Preferences</text>
-  <text x="32" y="203" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800">Settings</text>
-  <text x="38" y="272" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="800" letter-spacing="2">APPEARANCE</text>
-
   <defs>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="18" stdDeviation="22" flood-color="#E5DED0" flood-opacity="0.95"/>
+    <filter id="cardShadow" x="0" y="0" width="768" height="1664" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#0F172A" flood-opacity="0.08"/>
     </filter>
   </defs>
 
-  <rect x="32" y="299" width="704" height="198" rx="30" fill="#FFFFFF" filter="url(#shadow)"/>
-  <text x="56" y="345" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="700">Accent color</text>
-  <circle cx="95" cy="405" r="34" fill="#157765"/>
+  <rect width="768" height="1664" fill="#F4F5F7"/>
+  <text x="109" y="67" fill="#000000" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="700">11:55</text>
+  <rect x="273" y="24" width="220" height="64" rx="32" fill="#000000"/>
+  <circle cx="549" cy="56" r="5" fill="#C7CBD1"/><circle cx="565" cy="56" r="5" fill="#C7CBD1"/><circle cx="581" cy="56" r="5" fill="#C7CBD1"/><circle cx="597" cy="56" r="5" fill="#C7CBD1"/>
+  <path d="M624 45h29c10 0 18 8 18 18v14c0 10-8 18-18 18h-29c-10 0-18-8-18-18V63c0-10 8-18 18-18Z" stroke="#000000" stroke-width="4"/>
+  <rect x="647" y="52" width="18" height="36" rx="9" fill="#000000"/>
+  <path d="M602 53c7 0 13 6 13 13" stroke="#000000" stroke-width="4" stroke-linecap="round"/><path d="M598 61c10 0 18 8 18 18" stroke="#000000" stroke-width="4" stroke-linecap="round"/>
+
+  <text x="32" y="160" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="600">Preferences</text>
+  <text x="32" y="203" fill="#13161A" font-family="Helvetica, Arial, sans-serif" font-size="38" font-weight="800">Settings</text>
+
+  <text x="38" y="271" fill="#6B7481" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="800" letter-spacing="2">APPEARANCE</text>
+  <g filter="url(#cardShadow)">
+    <rect x="32" y="299" width="704" height="198" rx="30" fill="#FFFFFF"/>
+    <rect x="32" y="520" width="704" height="105" rx="28" fill="#FFFFFF"/>
+    <rect x="32" y="712" width="704" height="105" rx="28" fill="#FFFFFF"/>
+    <rect x="32" y="904" width="704" height="229" rx="28" fill="#FFFFFF"/>
+    <rect x="32" y="1156" width="704" height="149" rx="28" fill="#FFFFFF"/>
+    <rect x="32" y="1328" width="704" height="149" rx="28" fill="#FFFFFF"/>
+    <rect x="32" y="1502" width="704" height="104" rx="28" fill="#FFFFFF" opacity="0.78"/>
+  </g>
+
+  <text x="56" y="345" fill="#1A1D21" font-family="Helvetica, Arial, sans-serif" font-size="27" font-weight="700">Accent color</text>
+  <circle cx="95" cy="405" r="34" fill="#18856F"/>
   <circle cx="95" cy="405" r="28" fill="none" stroke="#FFFFFF" stroke-width="3"/>
-  <circle cx="188" cy="405" r="28" fill="#1D82A0"/>
-  <circle cx="272" cy="405" r="28" fill="#377C5D"/>
-  <text x="56" y="463" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="20">Emerald</text>
-  <text x="168" y="463" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="20">Teal</text>
-  <text x="251" y="463" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="20">Pine</text>
+  <circle cx="188" cy="405" r="28" fill="#23879B"/>
+  <circle cx="272" cy="405" r="28" fill="#39785E"/>
+  <text x="56" y="463" fill="#1A1D21" font-family="Helvetica, Arial, sans-serif" font-size="20">Emerald</text>
+  <text x="167" y="463" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="20">Teal</text>
+  <text x="250" y="463" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="20">Pine</text>
 
-  <rect x="32" y="520" width="704" height="105" rx="28" fill="#FFFFFF" filter="url(#shadow)"/>
-  <text x="56" y="565" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="700">Arabic names</text>
-  <text x="56" y="596" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="22">Show Arabic script beside prayer names</text>
-  <rect x="604" y="548" width="112" height="48" rx="24" fill="#177B67"/>
-  <rect x="646" y="551" width="67" height="42" rx="21" fill="#F7F4EF"/>
+  <text x="56" y="565" fill="#1A1D21" font-family="Helvetica, Arial, sans-serif" font-size="27" font-weight="700">Arabic names</text>
+  <text x="56" y="596" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="22">Show Arabic script beside prayer names</text>
+  <rect x="604" y="548" width="112" height="48" rx="24" fill="#18856F"/>
+  <rect x="646" y="551" width="67" height="42" rx="21" fill="#FFFFFF"/>
 
-  <text x="38" y="685" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="800" letter-spacing="2">TRACKING</text>
-  <rect x="32" y="712" width="704" height="105" rx="28" fill="#FFFFFF" filter="url(#shadow)"/>
-  <text x="56" y="756" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="700">Started tracking</text>
-  <text x="56" y="786" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="22">Jun 14, 2026</text>
-  <path d="M699 756l10 10-10 10" stroke="#ADB4AF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="38" y="685" fill="#6B7481" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="800" letter-spacing="2">TRACKING</text>
+  <text x="56" y="756" fill="#1A1D21" font-family="Helvetica, Arial, sans-serif" font-size="27" font-weight="700">Started tracking</text>
+  <text x="56" y="786" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="22">Jun 14, 2026</text>
+  <path d="M699 756l10 10-10 10" stroke="#A6AFBB" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 
-  <text x="38" y="875" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="800" letter-spacing="2">PRAYER TIMES</text>
-  <rect x="32" y="904" width="704" height="229" rx="28" fill="#FFFFFF" filter="url(#shadow)"/>
-  <text x="56" y="949" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="700">City</text>
-  <text x="56" y="980" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="22">Melbourne, Australia</text>
-  <path d="M699 949l10 10-10 10" stroke="#ADB4AF" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-  <line x1="32" y1="1010" x2="736" y2="1010" stroke="#E8E3DA" stroke-width="2"/>
-  <text x="56" y="1050" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="22">Cached year</text>
-  <text x="659" y="1050" fill="#A4ACA7" font-family="Arial, Helvetica, sans-serif" font-size="22">2026</text>
-  <line x1="32" y1="1071" x2="736" y2="1071" stroke="#E8E3DA" stroke-width="2"/>
-  <text x="56" y="1111" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="22">Last updated</text>
-  <text x="512" y="1111" fill="#A4ACA7" font-family="Arial, Helvetica, sans-serif" font-size="22">14/6/2026, 2:17 am</text>
+  <text x="38" y="875" fill="#6B7481" font-family="Helvetica, Arial, sans-serif" font-size="22" font-weight="800" letter-spacing="2">PRAYER TIMES</text>
+  <text x="56" y="949" fill="#1A1D21" font-family="Helvetica, Arial, sans-serif" font-size="27" font-weight="700">City</text>
+  <text x="56" y="980" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="22">Melbourne, Australia</text>
+  <path d="M699 949l10 10-10 10" stroke="#A6AFBB" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="32" y1="1010" x2="736" y2="1010" stroke="#E5EAF0" stroke-width="2"/>
+  <text x="56" y="1050" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="22">Cached year</text>
+  <text x="659" y="1050" fill="#98A2B3" font-family="Helvetica, Arial, sans-serif" font-size="22">2026</text>
+  <line x1="32" y1="1071" x2="736" y2="1071" stroke="#E5EAF0" stroke-width="2"/>
+  <text x="56" y="1111" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="22">Last updated</text>
+  <text x="499" y="1111" fill="#98A2B3" font-family="Helvetica, Arial, sans-serif" font-size="22">14/6/2026, 11:46 am</text>
 
-  <rect x="32" y="1156" width="704" height="149" rx="28" fill="#FFFFFF" filter="url(#shadow)"/>
-  <text x="56" y="1202" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="700">Calculation method</text>
-  <text x="78" y="1264" fill="#0F6A55" font-family="Arial, Helvetica, sans-serif" font-size="27">Muslim World League</text>
-  <path d="M373 1249l8 8 8-8M373 1271l8-8 8 8" stroke="#0F6A55" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="56" y="1202" fill="#1A1D21" font-family="Helvetica, Arial, sans-serif" font-size="27" font-weight="700">Calculation method</text>
+  <text x="78" y="1264" fill="#18856F" font-family="Helvetica, Arial, sans-serif" font-size="27">Muslim World League</text>
+  <path d="M373 1249l8 8 8-8M373 1271l8-8 8 8" stroke="#18856F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 
-  <rect x="32" y="1328" width="704" height="149" rx="28" fill="#FFFFFF" filter="url(#shadow)"/>
-  <text x="56" y="1374" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="27" font-weight="700">Asr calculation school</text>
-  <text x="78" y="1436" fill="#0F6A55" font-family="Arial, Helvetica, sans-serif" font-size="24">Standard (Shafi'i / Maliki / Hanbali)</text>
-  <path d="M542 1421l8 8 8-8M542 1443l8-8 8 8" stroke="#0F6A55" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="56" y="1374" fill="#1A1D21" font-family="Helvetica, Arial, sans-serif" font-size="27" font-weight="700">Asr calculation school</text>
+  <text x="78" y="1436" fill="#18856F" font-family="Helvetica, Arial, sans-serif" font-size="24">Standard (Shafi'i / Maliki / Hanbali)</text>
+  <path d="M542 1421l8 8 8-8M542 1443l8-8 8 8" stroke="#18856F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
 
-  <rect x="32" y="1502" width="704" height="104" rx="28" fill="#FCF9F2" opacity="0.75" filter="url(#shadow)"/>
-  <text x="56" y="1546" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="25" font-weight="700">Refresh prayer times</text>
-  <text x="56" y="1578" fill="#C6C0B6" font-family="Arial, Helvetica, sans-serif" font-size="22">Re-download this year's prayer times</text>
-  <circle cx="691" cy="1549" r="18" stroke="#77A89A" stroke-width="3" fill="none"/>
-  <path d="M691 1538v9h7" stroke="#77A89A" stroke-width="3" stroke-linecap="round"/>
-  <path d="M701 1545c0 6-4 12-10 14" stroke="#77A89A" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <text x="56" y="1546" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="25" font-weight="700">Refresh prayer times</text>
+  <text x="56" y="1578" fill="#C4CBD5" font-family="Helvetica, Arial, sans-serif" font-size="22">Re-download this year's prayer times</text>
+  <circle cx="691" cy="1549" r="18" stroke="#89C1B5" stroke-width="3" fill="none"/>
+  <path d="M691 1538v9h7" stroke="#89C1B5" stroke-width="3" stroke-linecap="round"/>
+  <path d="M701 1545c0 6-4 12-10 14" stroke="#89C1B5" stroke-width="3" fill="none" stroke-linecap="round"/>
 
-  <rect x="145" y="1523" width="479" height="108" rx="54" fill="#FEFBF4"/>
-  <path d="M210 1573l22-19 22 19v28h-44v-28Z" fill="none" stroke="#161310" stroke-width="4" stroke-linejoin="round"/>
-  <path d="M219 1569l13-12 13 12" stroke="#161310" stroke-width="4" stroke-linecap="round"/>
-  <rect x="226" y="1582" width="11" height="13" fill="#161310" rx="2"/>
-  <text x="208" y="1610" fill="#161310" font-family="Arial, Helvetica, sans-serif" font-size="18">Home</text>
-  <rect x="360" y="1558" width="12" height="26" rx="3" fill="#161310"/><rect x="378" y="1552" width="12" height="32" rx="3" fill="#161310"/><rect x="396" y="1546" width="12" height="38" rx="3" fill="#161310"/>
-  <text x="344" y="1610" fill="#161310" font-family="Arial, Helvetica, sans-serif" font-size="18">Analytics</text>
-  <rect x="453" y="1529" width="165" height="96" rx="48" fill="#E3DED3"/>
-  <circle cx="532" cy="1565" r="16" stroke="#0F6A55" stroke-width="6" fill="none"/>
-  <circle cx="532" cy="1565" r="4" fill="#0F6A55"/>
-  <path d="M532 1539v10M532 1581v10M506 1565h10M548 1565h10M515 1548l7 7M542 1575l7 7M515 1582l7-7M542 1555l7-7" stroke="#0F6A55" stroke-width="4" stroke-linecap="round"/>
-  <text x="497" y="1610" fill="#0F6A55" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700">Settings</text>
+  <g filter="url(#cardShadow)">
+    <rect x="145" y="1523" width="479" height="108" rx="54" fill="#FFFFFF"/>
+    <rect x="453" y="1529" width="165" height="96" rx="48" fill="#DFE3E9"/>
+  </g>
+  <path d="M209 1573l22-19 22 19v28h-44v-28Z" fill="none" stroke="#17191D" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M218 1569l13-12 13 12" stroke="#17191D" stroke-width="4" stroke-linecap="round"/>
+  <rect x="225" y="1582" width="11" height="13" rx="2" fill="#17191D"/>
+  <text x="206" y="1610" fill="#17191D" font-family="Helvetica, Arial, sans-serif" font-size="18">Home</text>
+  <rect x="360" y="1558" width="12" height="26" rx="3" fill="#17191D"/><rect x="378" y="1552" width="12" height="32" rx="3" fill="#17191D"/><rect x="396" y="1546" width="12" height="38" rx="3" fill="#17191D"/>
+  <text x="344" y="1610" fill="#17191D" font-family="Helvetica, Arial, sans-serif" font-size="18">Analytics</text>
+  <circle cx="532" cy="1565" r="16" stroke="#0E7E69" stroke-width="6" fill="none"/>
+  <circle cx="532" cy="1565" r="4" fill="#0E7E69"/>
+  <path d="M532 1539v10M532 1581v10M506 1565h10M548 1565h10M515 1548l7 7M542 1575l7 7M515 1582l7-7M542 1555l7-7" stroke="#0E7E69" stroke-width="4" stroke-linecap="round"/>
+  <text x="497" y="1610" fill="#0E7E69" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">Settings</text>
 </svg>

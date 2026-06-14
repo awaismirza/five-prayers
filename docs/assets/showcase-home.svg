@@ -1,101 +1,124 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="768" height="1664" viewBox="0 0 768 1664" fill="none">
-  <rect width="768" height="1664" fill="#F4EFE4"/>
-  <rect x="274" y="24" width="220" height="64" rx="32" fill="#050505"/>
-  <text x="84" y="95" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700">2:17</text>
-  <circle cx="598" cy="56" r="6" fill="#C9C5BE"/><circle cx="614" cy="56" r="6" fill="#C9C5BE"/><circle cx="630" cy="56" r="6" fill="#C9C5BE"/>
-  <path d="M676 48c16 0 29 13 29 29s-13 29-29 29-29-13-29-29 13-29 29-29Z" stroke="#202728" stroke-width="6" opacity="0.12"/>
-  <text x="32" y="160" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="600">Assalamu alaikum</text>
-  <text x="32" y="203" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="800">28 Dhul Hijjah</text>
-  <text x="32" y="236" fill="#A4ACA7" font-family="Arial, Helvetica, sans-serif" font-size="28">Sunday, 14 June 2026</text>
-  <circle cx="699" cy="187" r="38" fill="#FFFFFF"/>
-  <circle cx="699" cy="179" r="9" stroke="#7B8580" stroke-width="3" fill="none"/>
-  <path d="M686 202c6-8 21-8 27 0" stroke="#7B8580" stroke-width="3" stroke-linecap="round"/>
-
   <defs>
-    <linearGradient id="hero" x1="32" y1="274" x2="736" y2="588" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#177B67"/>
-      <stop offset="1" stop-color="#0D5548"/>
+    <linearGradient id="hero" x1="31" y1="275" x2="737" y2="589" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#18856F"/>
+      <stop offset="1" stop-color="#0C5E4F"/>
     </linearGradient>
-    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(593 387) rotate(90) scale(154 156)">
-      <stop stop-color="#89B4A8" stop-opacity="0.34"/>
-      <stop offset="1" stop-color="#89B4A8" stop-opacity="0"/>
+    <radialGradient id="heroGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(617 404) rotate(90) scale(178 198)">
+      <stop stop-color="#6FB2A3" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#6FB2A3" stop-opacity="0"/>
     </radialGradient>
+    <filter id="cardShadow" x="0" y="0" width="768" height="1664" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="16" stdDeviation="24" flood-color="#0F172A" flood-opacity="0.08"/>
+    </filter>
   </defs>
-  <rect x="31" y="274" width="706" height="314" rx="46" fill="url(#hero)"/>
-  <rect x="31" y="274" width="706" height="314" rx="46" fill="url(#glow)"/>
-  <text x="66" y="330" fill="#C4E0D8" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="800" letter-spacing="1.5">NEXT PRAYER</text>
-  <text x="627" y="330" fill="#E4EFEA" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700">0/5 today</text>
-  <text x="66" y="397" fill="#FFFFFF" font-family="Arial, Helvetica, sans-serif" font-size="46" font-weight="800">Fajr • 5:59 AM</text>
-  <text x="66" y="448" fill="#E4EFEA" font-family="Arial, Helvetica, sans-serif" font-size="26">Begins in 3h 41m — a moment to breathe</text>
-  <rect x="66" y="481" width="119" height="9" rx="4.5" fill="#6DA596"/>
-  <rect x="195" y="481" width="119" height="9" rx="4.5" fill="#6DA596"/>
-  <rect x="324" y="481" width="119" height="9" rx="4.5" fill="#6DA596"/>
-  <rect x="453" y="481" width="119" height="9" rx="4.5" fill="#6DA596"/>
-  <rect x="582" y="481" width="119" height="9" rx="4.5" fill="#6DA596"/>
 
-  <text x="39" y="657" fill="#202728" font-family="Arial, Helvetica, sans-serif" font-size="30" font-weight="800">Today's prayers</text>
-  <text x="362" y="657" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="26">A new day — one prayer at a time.</text>
+  <rect width="768" height="1664" fill="#F4F5F7"/>
+  <text x="109" y="67" fill="#000000" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="700">11:55</text>
+  <rect x="273" y="24" width="220" height="64" rx="32" fill="#000000"/>
+  <circle cx="549" cy="56" r="5" fill="#C7CBD1"/><circle cx="565" cy="56" r="5" fill="#C7CBD1"/><circle cx="581" cy="56" r="5" fill="#C7CBD1"/><circle cx="597" cy="56" r="5" fill="#C7CBD1"/>
+  <path d="M624 45h29c10 0 18 8 18 18v14c0 10-8 18-18 18h-29c-10 0-18-8-18-18V63c0-10 8-18 18-18Z" stroke="#000000" stroke-width="4"/>
+  <rect x="647" y="52" width="18" height="36" rx="9" fill="#000000"/>
+  <path d="M602 53c7 0 13 6 13 13" stroke="#000000" stroke-width="4" stroke-linecap="round"/><path d="M598 61c10 0 18 8 18 18" stroke="#000000" stroke-width="4" stroke-linecap="round"/>
 
-  <g>
-    <rect x="31" y="688" width="706" height="117" rx="34" fill="#FFFFFF"/>
-    <rect x="60" y="713" width="66" height="66" rx="18" fill="#F8F5EF" stroke="#E6E0D7" stroke-width="2"/>
-    <circle cx="93" cy="746" r="11" stroke="#AAB3AE" stroke-width="3" fill="none"/>
-    <path d="M93 726v8M93 758v8M73 746h8M105 746h8M79 732l5 5M102 755l5 5M79 760l5-5M102 737l5-5" stroke="#AAB3AE" stroke-width="3" stroke-linecap="round"/>
-    <text x="154" y="742" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700">Fajr</text>
-    <text x="154" y="773" fill="#8D9691" font-family="Arial, Helvetica, sans-serif" font-size="25">5:59 AM</text>
-    <circle cx="685" cy="747" r="24" stroke="#D0D6D1" stroke-width="4" fill="none"/>
+  <text x="32" y="160" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="28" font-weight="600">Assalamu alaikum</text>
+  <text x="32" y="203" fill="#13161A" font-family="Helvetica, Arial, sans-serif" font-size="38" font-weight="800">28 Dhul Hijjah</text>
+  <text x="32" y="236" fill="#9AA4B2" font-family="Helvetica, Arial, sans-serif" font-size="28">Sunday, 14 June 2026</text>
+
+  <g filter="url(#cardShadow)">
+    <circle cx="698" cy="187" r="38" fill="#FFFFFF"/>
+    <rect x="31" y="275" width="706" height="314" rx="46" fill="url(#hero)"/>
+    <rect x="31" y="275" width="706" height="314" rx="46" fill="url(#heroGlow)"/>
   </g>
-  <g>
+  <circle cx="698" cy="179" r="9" stroke="#6B7280" stroke-width="3" fill="none"/>
+  <path d="M685 202c6-8 21-8 27 0" stroke="#6B7280" stroke-width="3" stroke-linecap="round"/>
+
+  <text x="66" y="330" fill="#C7DCD7" font-family="Helvetica, Arial, sans-serif" font-size="24" font-weight="800" letter-spacing="1.5">NEXT PRAYER</text>
+  <text x="623" y="330" fill="#E8F0EE" font-family="Helvetica, Arial, sans-serif" font-size="26" font-weight="700">1/5 today</text>
+  <text x="66" y="397" fill="#FFFFFF" font-family="Helvetica, Arial, sans-serif" font-size="46" font-weight="800">Dhuhr · 12:20 PM</text>
+  <text x="66" y="448" fill="#E6F1EF" font-family="Helvetica, Arial, sans-serif" font-size="26">Begins in 24m — a moment to breathe</text>
+  <rect x="66" y="481" width="119" height="9" rx="4.5" fill="#FFFFFF"/>
+  <rect x="195" y="481" width="119" height="9" rx="4.5" fill="#6CA496" opacity="0.9"/>
+  <rect x="324" y="481" width="119" height="9" rx="4.5" fill="#5E9B8D" opacity="0.85"/>
+  <rect x="453" y="481" width="119" height="9" rx="4.5" fill="#5A9689" opacity="0.78"/>
+  <rect x="582" y="481" width="119" height="9" rx="4.5" fill="#548F83" opacity="0.72"/>
+
+  <text x="32" y="657" fill="#15181C" font-family="Helvetica, Arial, sans-serif" font-size="30" font-weight="800">Today's prayers</text>
+  <text x="543" y="657" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="26">1 prayed · 4 to go</text>
+
+  <g filter="url(#cardShadow)">
+    <rect x="31" y="688" width="706" height="117" rx="34" fill="#EEF8F2"/>
     <rect x="31" y="824" width="706" height="117" rx="34" fill="#FFFFFF"/>
-    <rect x="60" y="849" width="66" height="66" rx="18" fill="#F8F5EF" stroke="#E6E0D7" stroke-width="2"/>
-    <circle cx="93" cy="882" r="11" stroke="#AAB3AE" stroke-width="3" fill="none"/>
-    <path d="M93 862v8M93 894v8M73 882h8M105 882h8M79 868l5 5M102 891l5 5M79 896l5-5M102 873l5-5" stroke="#AAB3AE" stroke-width="3" stroke-linecap="round"/>
-    <text x="154" y="878" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700">Dhuhr</text>
-    <text x="154" y="909" fill="#8D9691" font-family="Arial, Helvetica, sans-serif" font-size="25">12:20 PM</text>
-    <circle cx="685" cy="883" r="24" stroke="#D0D6D1" stroke-width="4" fill="none"/>
-  </g>
-  <g>
     <rect x="31" y="960" width="706" height="117" rx="34" fill="#FFFFFF"/>
-    <rect x="60" y="985" width="66" height="66" rx="18" fill="#F8F5EF" stroke="#E6E0D7" stroke-width="2"/>
-    <circle cx="93" cy="1018" r="11" stroke="#AAB3AE" stroke-width="3" fill="none"/>
-    <circle cx="93" cy="1018" r="2.5" fill="#AAB3AE"/>
-    <circle cx="93" cy="995" r="1.6" fill="#C5CBC7"/><circle cx="93" cy="1041" r="1.6" fill="#C5CBC7"/><circle cx="70" cy="1018" r="1.6" fill="#C5CBC7"/><circle cx="116" cy="1018" r="1.6" fill="#C5CBC7"/><circle cx="77" cy="1002" r="1.6" fill="#C5CBC7"/><circle cx="109" cy="1002" r="1.6" fill="#C5CBC7"/><circle cx="77" cy="1034" r="1.6" fill="#C5CBC7"/><circle cx="109" cy="1034" r="1.6" fill="#C5CBC7"/>
-    <text x="154" y="1014" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700">Asr</text>
-    <text x="154" y="1045" fill="#8D9691" font-family="Arial, Helvetica, sans-serif" font-size="25">2:50 PM</text>
-    <circle cx="685" cy="1019" r="24" stroke="#D0D6D1" stroke-width="4" fill="none"/>
-  </g>
-  <g>
     <rect x="31" y="1096" width="706" height="117" rx="34" fill="#FFFFFF"/>
-    <rect x="60" y="1121" width="66" height="66" rx="18" fill="#F8F5EF" stroke="#E6E0D7" stroke-width="2"/>
-    <path d="M77 1160h32M84 1152h18M93 1140v14" stroke="#AAB3AE" stroke-width="3" stroke-linecap="round"/>
-    <path d="M93 1136c6 0 11 5 11 11" stroke="#AAB3AE" stroke-width="3" fill="none" stroke-linecap="round"/>
-    <path d="M104 1147l6-5" stroke="#AAB3AE" stroke-width="3" stroke-linecap="round"/>
-    <text x="154" y="1150" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700">Maghrib</text>
-    <text x="154" y="1181" fill="#8D9691" font-family="Arial, Helvetica, sans-serif" font-size="25">5:07 PM</text>
-    <circle cx="685" cy="1155" r="24" stroke="#D0D6D1" stroke-width="4" fill="none"/>
-  </g>
-  <g>
     <rect x="31" y="1232" width="706" height="117" rx="34" fill="#FFFFFF"/>
-    <rect x="60" y="1257" width="66" height="66" rx="18" fill="#F8F5EF" stroke="#E6E0D7" stroke-width="2"/>
-    <path d="M97 1274c-8 4-13 12-13 21 0 14 11 25 25 25 7 0 13-3 18-7-3 1-6 1-9 1-14 0-25-11-25-25 0-6 2-11 4-15Z" fill="none" stroke="#AAB3AE" stroke-width="3"/>
-    <path d="M108 1286l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6ZM120 1276l1 4 4 1-4 1-1 4-1-4-4-1 4-1 1-4Z" fill="#AAB3AE"/>
-    <text x="154" y="1286" fill="#7B8580" font-family="Arial, Helvetica, sans-serif" font-size="31" font-weight="700">Isha</text>
-    <text x="154" y="1317" fill="#8D9691" font-family="Arial, Helvetica, sans-serif" font-size="25">6:36 PM</text>
-    <circle cx="685" cy="1291" r="24" stroke="#D0D6D1" stroke-width="4" fill="none"/>
   </g>
 
-  <text x="161" y="1411" fill="#A4ACA7" font-family="Arial, Helvetica, sans-serif" font-size="24">Times downloaded for Melbourne, Australia.</text>
+  <g>
+    <rect x="60" y="713" width="68" height="68" rx="20" fill="#ECF1F4" stroke="#D5DCE3" stroke-width="2"/>
+    <path d="M76 746h36M85 738a9 9 0 0 1 18 0M94 724v8M80 730l-5-4M108 730l5-4" stroke="#18856F" stroke-width="3" stroke-linecap="round"/>
+    <text x="154" y="742" fill="#15181C" font-family="Helvetica, Arial, sans-serif" font-size="31" font-weight="700">Fajr</text>
+    <text x="226" y="742" fill="#98A2B3" font-family="Helvetica, Arial, sans-serif" font-size="26">الفجر</text>
+    <text x="154" y="773" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="25">5:59 AM</text>
+    <text x="596" y="752" fill="#18856F" font-family="Helvetica, Arial, sans-serif" font-size="25" font-weight="700">On time</text>
+    <circle cx="682" cy="746" r="26" fill="#22A261"/>
+    <path d="M670 746l8 8 16-18" stroke="#FFFFFF" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
 
-  <rect x="145" y="1523" width="479" height="108" rx="54" fill="#FEFBF4"/>
-  <rect x="151" y="1529" width="165" height="96" rx="48" fill="#E3DED3"/>
-  <path d="M210 1573l22-19 22 19v28h-44v-28Z" fill="none" stroke="#0F6A55" stroke-width="4" stroke-linejoin="round"/>
-  <path d="M219 1569l13-12 13 12" stroke="#0F6A55" stroke-width="4" stroke-linecap="round"/>
-  <rect x="226" y="1582" width="11" height="13" fill="#0F6A55" rx="2"/>
-  <text x="208" y="1610" fill="#0F6A55" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700">Home</text>
-  <rect x="360" y="1558" width="12" height="26" rx="3" fill="#161310"/><rect x="378" y="1552" width="12" height="32" rx="3" fill="#161310"/><rect x="396" y="1546" width="12" height="38" rx="3" fill="#161310"/>
-  <text x="344" y="1610" fill="#161310" font-family="Arial, Helvetica, sans-serif" font-size="18">Analytics</text>
-  <circle cx="532" cy="1565" r="16" stroke="#161310" stroke-width="6" fill="none"/>
-  <circle cx="532" cy="1565" r="4" fill="#161310"/>
-  <path d="M532 1539v10M532 1581v10M506 1565h10M548 1565h10M515 1548l7 7M542 1575l7 7M515 1582l7-7M542 1555l7-7" stroke="#161310" stroke-width="4" stroke-linecap="round"/>
-  <text x="497" y="1610" fill="#161310" font-family="Arial, Helvetica, sans-serif" font-size="18">Settings</text>
+  <g>
+    <rect x="60" y="849" width="68" height="68" rx="20" fill="#ECF1F4" stroke="#D5DCE3" stroke-width="2"/>
+    <circle cx="94" cy="883" r="11" stroke="#9AA4B2" stroke-width="3" fill="none"/>
+    <path d="M94 864v7M94 895v7M75 883h7M106 883h7M80 870l5 5M103 893l5 5M80 896l5-5M103 873l5-5" stroke="#9AA4B2" stroke-width="3" stroke-linecap="round"/>
+    <text x="154" y="878" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="31" font-weight="700">Dhuhr</text>
+    <text x="247" y="878" fill="#A0A9B7" font-family="Helvetica, Arial, sans-serif" font-size="26">الظهر</text>
+    <text x="154" y="909" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="25">12:20 PM</text>
+    <circle cx="682" cy="883" r="26" stroke="#D1D8E0" stroke-width="4" fill="none"/>
+  </g>
+
+  <g>
+    <rect x="60" y="985" width="68" height="68" rx="20" fill="#ECF1F4" stroke="#D5DCE3" stroke-width="2"/>
+    <circle cx="94" cy="1019" r="11" stroke="#9AA4B2" stroke-width="3" fill="none"/>
+    <circle cx="94" cy="1019" r="2.5" fill="#9AA4B2"/>
+    <circle cx="94" cy="996" r="1.6" fill="#B9C0CB"/><circle cx="94" cy="1042" r="1.6" fill="#B9C0CB"/><circle cx="71" cy="1019" r="1.6" fill="#B9C0CB"/><circle cx="117" cy="1019" r="1.6" fill="#B9C0CB"/><circle cx="78" cy="1003" r="1.6" fill="#B9C0CB"/><circle cx="110" cy="1003" r="1.6" fill="#B9C0CB"/><circle cx="78" cy="1035" r="1.6" fill="#B9C0CB"/><circle cx="110" cy="1035" r="1.6" fill="#B9C0CB"/>
+    <text x="154" y="1014" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="31" font-weight="700">Asr</text>
+    <text x="218" y="1014" fill="#A0A9B7" font-family="Helvetica, Arial, sans-serif" font-size="26">العصر</text>
+    <text x="154" y="1045" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="25">2:50 PM</text>
+    <circle cx="682" cy="1019" r="26" stroke="#D1D8E0" stroke-width="4" fill="none"/>
+  </g>
+
+  <g>
+    <rect x="60" y="1121" width="68" height="68" rx="20" fill="#ECF1F4" stroke="#D5DCE3" stroke-width="2"/>
+    <path d="M77 1160h34M87 1152h14M94 1141v12M84 1142l10 10 10-10" stroke="#9AA4B2" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="154" y="1150" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="31" font-weight="700">Maghrib</text>
+    <text x="251" y="1150" fill="#A0A9B7" font-family="Helvetica, Arial, sans-serif" font-size="26">المغرب</text>
+    <text x="154" y="1181" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="25">5:07 PM</text>
+    <circle cx="682" cy="1155" r="26" stroke="#D1D8E0" stroke-width="4" fill="none"/>
+  </g>
+
+  <g>
+    <rect x="60" y="1257" width="68" height="68" rx="20" fill="#ECF1F4" stroke="#D5DCE3" stroke-width="2"/>
+    <path d="M95 1280c-9 4-15 13-15 23 0 15 12 27 27 27 7 0 15-3 20-8-3 1-6 2-10 2-15 0-27-12-27-27 0-6 2-12 5-17Z" stroke="#9AA4B2" stroke-width="3" fill="none"/>
+    <path d="M108 1291l2 6 6 2-6 2-2 6-2-6-6-2 6-2 2-6ZM120 1281l1 4 4 1-4 1-1 4-1-4-4-1 4-1 1-4Z" fill="#9AA4B2"/>
+    <text x="154" y="1286" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="31" font-weight="700">Isha</text>
+    <text x="221" y="1286" fill="#A0A9B7" font-family="Helvetica, Arial, sans-serif" font-size="26">العشاء</text>
+    <text x="154" y="1317" fill="#667381" font-family="Helvetica, Arial, sans-serif" font-size="25">6:36 PM</text>
+    <circle cx="682" cy="1291" r="26" stroke="#D1D8E0" stroke-width="4" fill="none"/>
+  </g>
+
+  <text x="128" y="1412" fill="#97A2B1" font-family="Helvetica, Arial, sans-serif" font-size="24">Times downloaded for Melbourne, Australia.</text>
+
+  <g filter="url(#cardShadow)">
+    <rect x="145" y="1523" width="479" height="108" rx="54" fill="#FFFFFF"/>
+    <rect x="151" y="1529" width="165" height="96" rx="48" fill="#DFE3E9"/>
+  </g>
+  <path d="M209 1573l22-19 22 19v28h-44v-28Z" fill="none" stroke="#0E7E69" stroke-width="4" stroke-linejoin="round"/>
+  <path d="M218 1569l13-12 13 12" stroke="#0E7E69" stroke-width="4" stroke-linecap="round"/>
+  <rect x="225" y="1582" width="11" height="13" rx="2" fill="#0E7E69"/>
+  <text x="206" y="1610" fill="#0E7E69" font-family="Helvetica, Arial, sans-serif" font-size="18" font-weight="700">Home</text>
+  <rect x="360" y="1558" width="12" height="26" rx="3" fill="#17191D"/><rect x="378" y="1552" width="12" height="32" rx="3" fill="#17191D"/><rect x="396" y="1546" width="12" height="38" rx="3" fill="#17191D"/>
+  <text x="344" y="1610" fill="#17191D" font-family="Helvetica, Arial, sans-serif" font-size="18">Analytics</text>
+  <circle cx="532" cy="1565" r="16" stroke="#17191D" stroke-width="6" fill="none"/>
+  <circle cx="532" cy="1565" r="4" fill="#17191D"/>
+  <path d="M532 1539v10M532 1581v10M506 1565h10M548 1565h10M515 1548l7 7M542 1575l7 7M515 1582l7-7M542 1555l7-7" stroke="#17191D" stroke-width="4" stroke-linecap="round"/>
+  <text x="497" y="1610" fill="#17191D" font-family="Helvetica, Arial, sans-serif" font-size="18">Settings</text>
 </svg>

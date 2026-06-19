@@ -2,6 +2,8 @@
 
 Static website for [Five Prayers](https://awaismirza.github.io/five-prayers), a simple and private iPhone app for tracking the five daily prayers.
 
+Download on the App Store: [Five Prayers](https://apps.apple.com/us/app/five-prayers/id6780003136)
+
 ## Structure
 
 The only website page is the root [../index.html](../index.html). The `docs/` folder is now only used for shared image assets referenced by that page.
@@ -27,6 +29,7 @@ Use these URLs in App Store Connect:
 | Privacy Policy URL | `https://awaismirza.github.io/five-prayers/#privacy` |
 | Terms & Conditions URL | `https://awaismirza.github.io/five-prayers/#terms` |
 | Support URL | `https://awaismirza.github.io/five-prayers/#support` |
+| App Store URL | `https://apps.apple.com/us/app/five-prayers/id6780003136` |
 
 ## Contact
 
@@ -38,3 +41,4 @@ Use `owaesmirza@gmail.com` as the support address.
 - No external trackers, analytics, or cookies.
 - No CDN dependencies — fully offline-capable once loaded.
 - Responsive — works on mobile and desktop.
+- The top navigation and hero section include direct App Store download calls to action.

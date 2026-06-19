@@ -2,7 +2,7 @@
 
 ## Overview
 
-A native iOS app (SwiftUI + SwiftData) for tracking the five daily Islamic prayers (Salah). The app is warm, encouraging, and built around the today-screen paradigm — one glance shows where you are in the day, one tap logs a prayer. Prayer timing now uses downloaded city-based schedules when available, with static fallback times as a safety net.
+A native iOS app (SwiftUI + SwiftData) for tracking the five daily Islamic prayers (Salah). The app is warm, encouraging, and built around the today-screen paradigm — one glance shows where you are in the day, one tap logs a prayer once its time has arrived. Prayer timing uses downloaded city-based schedules when available, with static fallback times as a safety net.
 
 ---
 
@@ -25,17 +25,22 @@ A native iOS app (SwiftUI + SwiftData) for tracking the five daily Islamic praye
 FivePrayers/
 ├── FivePrayersApp.swift        — App entry, SwiftData schema
 ├── Item.swift                  — PrayerEntry model, Prayer data, AppTheme, AccentColor,
-│                                 PrayerStats, helpers (fmtClock, decoratePrayers, buildCSV…)
+│                                 PrayerStats, missed-prayer helpers, formatting, CSV export
+├── MadeUpPrayerEntry.swift     — SwiftData model for prayers made up later
+├── MissedPrayerInstance.swift  — Derived remaining-missed prayer instance type
 ├── ContentView.swift           — Root shell: onboarding gate + TabView
 ├── HomeTab.swift               — Today tab: prayer list, hero card, toggle logic
 ├── PrayerViews.swift           — Reusable prayer UI (CheckCircleView, HeroView, PrayerRowView…)
-├── AnalyticsViews.swift        — Analytics tab: streaks, completion rate, breakdown
+├── AnalyticsViews.swift        — Progress tab UI: prayed, missed, made-up, remaining missed
+├── MadeUpPrayerSheet.swift     — Sheet for marking missed prayers as Made Up
 ├── SettingsViews.swift         — Settings tab: accent, tracking date, prayer times, reminders, CSV
 ├── OnboardingView.swift        — 4-step first-launch wizard
 ├── PrayerLocation.swift        — Location + prayer-time cache models
 ├── CitySearchService.swift     — City autocomplete / resolve flow
 ├── PrayerTimesAPIService.swift — AlAdhan calendar API client
-└── PrayerTimeCache.swift       — Cached prayer times, persistence, refresh logic
+├── PrayerTimeCache.swift       — Cached prayer times, persistence, refresh logic
+├── PrayerNotificationService.swift — Local prayer notification scheduling
+└── AppNotificationDelegate.swift   — Foreground notification presentation
 ```
 
 ---
@@ -49,6 +54,22 @@ FivePrayers/
 | `dayKey` | `String` | `yyyy-MM-dd` — scopes entries to a calendar day |
 | `prayerId` | `String` | `fajr` \| `dhuhr` \| `asr` \| `maghrib` \| `isha` |
 | `madeUp` | `Bool` | `true` if logged after the window passed (made up / qada) |
+
+### `MadeUpPrayerEntry` (SwiftData `@Model`)
+
+Separate records for missed prayers that were made up later. This avoids mutating or backfilling normal prayer-log rows.
+
+| Field | Type | Description |
+|---|---|---|
+| `id` | `UUID` | Stable record identifier |
+| `prayerId` | `String` | Prayer identifier (`fajr`, `dhuhr`, etc.) |
+| `prayerName` | `String` | Display name at time of entry |
+| `originalDayKey` | `String` | The missed prayer date, `yyyy-MM-dd` |
+| `originalDate` | `Date` | Date object for the missed prayer day |
+| `madeUpAt` | `Date` | When the user marked it Made Up |
+| `note` | `String?` | Optional future metadata |
+
+Duplicate Made Up records are prevented by checking the derived key `originalDayKey + prayerId` before inserting.
 
 ### Prayers (static fallback)
 
@@ -85,6 +106,8 @@ The app now has a city-based prayer-time pipeline:
 
 State is computed live from the current clock minute against the active prayer schedule.
 
+Upcoming prayers are intentionally disabled. They cannot be marked as prayed before their scheduled time, and same-day future entries are ignored by display/stats and cleaned up by Home when encountered.
+
 ---
 
 ## Screens
@@ -96,7 +119,7 @@ Four steps presented in a `TabView` with a paged swipe:
 1. **Welcome** — app introduction
 2. **Tracking start date** — `DatePicker(.compact)` defaulting to today; saved to `@AppStorage("trackingStart")`
 3. **Location** — city search and selection flow; saved to `@AppStorage("locationName")` and `PrayerTimeCache`
-4. **Reminders** — toggle for 15-min-before notifications; saved to `@AppStorage("remindersEnabled")`
+4. **Reminders** — toggle for local prayer notifications; saved to `@AppStorage("remindersEnabled")`
 
 Completion sets `@AppStorage("onboardingDone") = true`. Never shown again unless UserDefaults is cleared.
 
@@ -110,7 +133,7 @@ Onboarding is now also responsible for:
 
 ### 2. Home Tab (`HomeTab`)
 
-**Header** — "Assalamu alaikum" greeting, Hijri date (Islamic Civil calendar), Gregorian date, avatar circle.
+**Header** — "Assalamu alaikum" greeting, Hijri date (Islamic Civil calendar), Gregorian date, and, when needed, an animated "Enable" notification card.
 
 **Hero card** — gradient spotlight that adapts to the moment:
 - Current prayer: name + time + "Mark X as prayed" CTA button
@@ -126,29 +149,62 @@ Onboarding is now also responsible for:
 - Prayer times are drawn from the downloaded schedule for the selected city when available, otherwise the fallback static times are used.
 
 **Interactions:**
-- Tap to toggle prayed/unprayed
+- Tap to toggle prayed/unprayed only after the prayer time has arrived
+- Upcoming prayer rows are disabled and show an "Upcoming" tag
 - Haptic feedback (`UIImpactFeedbackGenerator(.light)`) on mark
 - Bloom ripple (scale 0.45 → 2.8, opacity 0.55 → 0) on mark
 - Staggered entrance animation (fade + slide) on first load
+- Invalid same-day future entries are removed as the clock/app state refreshes
+
+**Notification prompt:**
+- If reminders are disabled or iOS notification permission is missing, Home shows an animated green "Enable" card in the top-right area.
+- Tapping it requests notification permission and schedules local prayer notifications.
+- If notification permission was previously denied, tapping opens iOS Settings.
 
 ---
 
-### 3. Analytics Tab (`AnalyticsTab`)
+### 3. Progress Tab (`AnalyticsTab`)
 
-Stats computed from all `PrayerEntry` records since `trackingStart`.
+The visible tab is named **Progress**. The Swift file/type remains `AnalyticsViews.swift` / `AnalyticsTab` for compatibility.
 
-**Big-number cards (2-column grid):**
-- 🔥 Current Streak (consecutive days with all 5 prayed)
-- ⭐ Longest Streak
-- ✓ Completion Rate (%) = total logged / (daysTracked × 5)
-- 🕐 On-Time Rate (%) = on-time / total logged
+Stats are derived from:
+- normal `PrayerEntry` records
+- expected prayers since `trackingStart`
+- `MadeUpPrayerEntry` records
+- current downloaded/fallback prayer times for today
 
-**Consistency by prayer** — one card per prayer with:
-- Logged count + made-up count
-- Horizontal bar: green ≥80%, amber ≥50%, red-ish <50%
-- On-time percentage label
+**Top summary:**
+- Remaining Missed
+- Made Up
+- Total Missed
 
-**Breakdown** — two cards: "On-time" (green number) / "Made up" (amber number)
+**Big-number cards:**
+- Current Streak
+- Longest Streak
+- Prayed Rate
+- Prayed total
+
+**Missed prayers by prayer:**
+- One row per prayer: Fajr, Dhuhr, Asr, Maghrib, Isha
+- Shows Prayed, Made Up, Total Missed, Remaining Missed
+- Rows with remaining missed prayers expose a "Make Up" action
+
+**Made Up sheet:**
+- Opens from a Progress prayer row
+- Lists remaining missed dates for that prayer
+- "Mark 1 as Made Up" marks the oldest remaining missed instance
+- Each date row can also be marked directly
+- The sheet stays open after each mark and removes only the marked date
+- The sheet dismisses automatically only when all remaining missed instances for that prayer are made up
+- Users can also dismiss by swiping down or tapping the X button
+
+**Counting rules:**
+- Past days after `trackingStart`: all five prayers are expected
+- Today: only prayers whose scheduled time has passed are expected
+- Future prayers today are not counted as missed
+- `totalMissedOriginal = expected - normal prayed`
+- `totalRemainingMissed = max(0, totalMissedOriginal - unique made-up missed entries)`
+- Made-up missed prayers do not count as normal on-time prayed prayers
 
 ---
 
@@ -166,7 +222,7 @@ Stats computed from all `PrayerEntry` records since `trackingStart`.
 - City search sheet for changing the active location
 
 **Notifications**
-- Reminders toggle (15 min before each prayer)
+- Reminders toggle for local iOS prayer notifications
 
 **Data**
 - Export as CSV — generates `Date,Fajr,Dhuhr,Asr,Maghrib,Isha` rows, shares via `UIActivityViewController`
@@ -222,6 +278,31 @@ Prayer-time cache state is also persisted in `UserDefaults`:
 
 ---
 
+## Local Notifications
+
+The app uses local iOS notifications only. It does not use remote push notifications.
+
+`PrayerNotificationService`:
+- checks current notification authorization
+- requests permission when needed
+- schedules prayer notifications for Fajr, Dhuhr, Asr, Maghrib, and Isha
+- skips notification dates/times already in the past
+- schedules a rolling 10-day window
+- cancels old app-created prayer notifications before rescheduling
+- cancels app-created notifications when reminders are disabled
+
+Notifications are rescheduled when:
+- the app launches
+- the app becomes active
+- reminders are toggled
+- prayer times are downloaded/refreshed
+- city, calculation method, or Asr school changes
+- onboarding completes with reminders enabled
+
+`AppNotificationDelegate` presents notifications while the app is foregrounded using banner, list, and sound presentation options.
+
+---
+
 ## Animations
 
 | Animation | Trigger | Spec |
@@ -231,13 +312,13 @@ Prayer-time cache state is also persisted in `UserDefaults`:
 | Bloom ripple | Mark prayer | Scale 0.45 → 2.8, opacity 0.55 → 0, `.easeOut(0.7)` |
 | Row entrance | First load | Fade+slide, `.easeOut(0.5)`, staggered `i × 55ms` |
 | Press scale | Button tap | Scale 0.985, `.easeOut(0.12)` |
+| Notification prompt pulse | Home notification enable card | Repeating green pulse while notification setup is incomplete |
 
 ---
 
 ## Planned / Future Work
 
 - [ ] True GPS-based auto-detection and prayer-time switching (instead of city search)
-- [ ] Local notifications for prayer reminders
 - [ ] Weekly / monthly history calendar view
 - [ ] iCloud sync
 - [ ] Widget (today summary)
@@ -255,3 +336,12 @@ This section is a quick handoff for the next chat / contributor.
 - Updated onboarding so the city step resolves a real location and downloads prayer times before completion.
 - Updated Home so prayer status uses downloaded daily times when available, and falls back to the static schedule otherwise.
 - Updated Settings so users can see the selected city, cached year, last download time, calculation method, and Asr school, plus manually refresh prayer times.
+- Added local iOS prayer notifications with foreground banner/list/sound presentation.
+- Added an animated Home notification prompt when reminders or iOS notification permission are not enabled.
+- Renamed the visible Analytics tab to Progress.
+- Added Made Up missed-prayer tracking with a separate SwiftData model.
+- Added a Make Up sheet for marking remaining missed prayer dates as Made Up.
+- Updated Progress stats to show prayed, total missed, made up, and remaining missed counts.
+- Disabled upcoming prayers on Home so they cannot be marked before their time.
+- Removed the Home profile/avatar icon.
+- Updated the static website with direct App Store download links and green download CTAs.

@@ -1,14 +1,33 @@
 import SwiftUI
 import SwiftData
+import Combine
 
 struct AnalyticsTab: View {
     let T: AppTheme
     let trackingStart: String
+    @ObservedObject var prayerTimeCache: PrayerTimeCache
 
     @Query private var allEntries: [PrayerEntry]
+    @State private var now = Date()
+
+    private let clockTimer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
+
+    private var prayerTimeZone: TimeZone? {
+        prayerTimeCache.selectedLocation.flatMap { TimeZone(identifier: $0.timezone) }
+    }
+
+    private var todayPrayers: [Prayer] {
+        Prayer.dailyPrayers(from: prayerTimeCache.prayerTimes(for: now))
+    }
 
     private var stats: PrayerStats {
-        computeStats(entries: allEntries, trackingStart: trackingStart)
+        computeStats(
+            entries: allEntries,
+            trackingStart: trackingStart,
+            todayPrayers: todayPrayers,
+            now: now,
+            timezone: prayerTimeZone
+        )
     }
 
     private var sinceLabel: String {
@@ -42,6 +61,9 @@ struct AnalyticsTab: View {
                     }
                     .padding(.bottom, 20)
 
+                    MissedTotalCard(T: T, value: stats.totalMissed)
+                        .padding(.bottom, 12)
+
                     // Big stat cards
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                         StatCard(T: T, label: "Current Streak",
@@ -53,9 +75,9 @@ struct AnalyticsTab: View {
                         StatCard(T: T, label: "Completion",
                                  value: stats.completionRate, unit: "%",
                                  icon: "checkmark.circle.fill", iconColor: T.prayed)
-                        StatCard(T: T, label: "On-Time",
-                                 value: stats.onTimeRate, unit: "%",
-                                 icon: "clock.fill", iconColor: T.primary)
+                        StatCard(T: T, label: "Prayed",
+                                 value: stats.totalLogged, unit: "logged",
+                                 icon: "hands.sparkles.fill", iconColor: T.primary)
                     }
                     .padding(.bottom, 28)
 
@@ -69,13 +91,13 @@ struct AnalyticsTab: View {
                     VStack(spacing: 10) {
                         ForEach(Prayer.all) { prayer in
                             let stat = stats.byPrayer[prayer.id]
-                                ?? PrayerPrayerStat(logged: 0, onTime: 0, madeUp: 0)
+                                ?? PrayerPrayerStat(expected: 0, logged: 0, missed: 0, onTime: 0, madeUp: 0)
                             PrayerBreakdownRow(prayer: prayer, stat: stat, T: T)
                         }
                     }
                     .padding(.bottom, 28)
 
-                    // On-time vs made-up
+                    // Prayed vs missed
                     Text("Breakdown")
                         .font(.system(size: 17, weight: .bold))
                         .foregroundStyle(T.text)
@@ -83,10 +105,10 @@ struct AnalyticsTab: View {
                         .padding(.bottom, 12)
 
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                        BreakdownCard(T: T, label: "On-time",
-                                      value: stats.totalOnTime, color: T.prayed)
-                        BreakdownCard(T: T, label: "Made up",
-                                      value: stats.totalMadeUp, color: T.amber)
+                        BreakdownCard(T: T, label: "Total Prayed",
+                                      value: stats.totalLogged, color: T.prayed)
+                        BreakdownCard(T: T, label: "Total Missed",
+                                      value: stats.totalMissed, color: T.amber)
                     }
                     .padding(.bottom, 22)
 
@@ -102,6 +124,43 @@ struct AnalyticsTab: View {
                 .padding(.top, 16)
             }
         }
+        .onAppear { now = Date() }
+        .onReceive(clockTimer) { tick in now = tick }
+    }
+}
+
+// MARK: - Missed total card
+
+struct MissedTotalCard: View {
+    let T: AppTheme
+    let value: Int
+
+    var body: some View {
+        HStack(spacing: 14) {
+            Image(systemName: "exclamationmark.circle.fill")
+                .font(.system(size: 30))
+                .foregroundStyle(T.amber)
+                .frame(width: 38)
+            VStack(alignment: .leading, spacing: 3) {
+                Text("Total Missed Prayers")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(T.muted)
+                Text("\(value)")
+                    .font(.system(size: 34, weight: .bold))
+                    .foregroundStyle(T.text)
+                    .monospacedDigit()
+                Text("Since tracking started")
+                    .font(.system(size: 12.5))
+                    .foregroundStyle(T.faint)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(16)
+        .background(T.card)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(T.line, lineWidth: 1))
+        .shadow(color: T.dark ? .black.opacity(0.24) : .black.opacity(0.08),
+            radius: 16, x: 0, y: 10)
     }
 }
 
@@ -155,8 +214,8 @@ struct PrayerBreakdownRow: View {
     let T: AppTheme
 
     private var barColor: Color {
-        stat.onTimeRate >= 80 ? T.prayed
-        : stat.onTimeRate >= 50 ? T.amber
+        stat.completionRate >= 80 ? T.prayed
+        : stat.completionRate >= 50 ? T.amber
         : Color(hex: "E06767")
     }
 
@@ -167,9 +226,7 @@ struct PrayerBreakdownRow: View {
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(T.text)
                 Spacer()
-                Text(stat.madeUp > 0
-                     ? "\(stat.logged) logged (\(stat.madeUp) made up)"
-                     : "\(stat.logged) logged")
+                Text("\(stat.logged) prayed · \(stat.missed) missed")
                     .font(.system(size: 12))
                     .foregroundStyle(T.muted)
             }
@@ -179,18 +236,23 @@ struct PrayerBreakdownRow: View {
                     Capsule().fill(barColor)
                         .frame(
                             width: max(
-                                CGFloat(stat.onTimeRate) / 100.0 * geo.size.width,
+                                CGFloat(stat.completionRate) / 100.0 * geo.size.width,
                                 stat.logged > 0 ? 8 : 0
                             ),
                             height: 6
                         )
-                        .animation(.easeOut(duration: 0.4), value: stat.onTimeRate)
+                        .animation(.easeOut(duration: 0.4), value: stat.completionRate)
                 }
             }
             .frame(height: 6)
-            Text("\(stat.onTimeRate)% on-time")
-                .font(.system(size: 12))
-                .foregroundStyle(T.faint)
+            HStack(spacing: 6) {
+                Text("\(stat.completionRate)% prayed")
+                if stat.madeUp > 0 {
+                    Text("· \(stat.madeUp) made up")
+                }
+            }
+            .font(.system(size: 12))
+            .foregroundStyle(T.faint)
         }
         .padding(14)
         .background(T.card)

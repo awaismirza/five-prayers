@@ -246,8 +246,16 @@ struct SettingsTab: View {
                     // Notifications
                     SettingSection(title: "Notifications", T: T) {
                         ToggleRow(T: T, label: "Remind me",
-                                  detail: "15 min before each prayer",
+                                  detail: "Notify me when each prayer begins",
                                   value: $remindersEnabled)
+                    }
+                    .onChange(of: remindersEnabled) { _, enabled in
+                        Task {
+                            await PrayerNotificationService.shared.refreshSchedule(
+                                remindersEnabled: enabled,
+                                prayerTimeCache: prayerTimeCache
+                            )
+                        }
                     }
 
                     // Data
@@ -376,6 +384,10 @@ struct SettingsTab: View {
                 method: prayerTimeCache.calculationMethod,
                 school: prayerTimeCache.school
             )
+            await PrayerNotificationService.shared.refreshSchedule(
+                remindersEnabled: remindersEnabled,
+                prayerTimeCache: prayerTimeCache
+            )
         }
     }
 
@@ -386,6 +398,10 @@ struct SettingsTab: View {
                 location: loc,
                 method: prayerTimeCache.calculationMethod,
                 school: prayerTimeCache.school
+            )
+            await PrayerNotificationService.shared.refreshSchedule(
+                remindersEnabled: remindersEnabled,
+                prayerTimeCache: prayerTimeCache
             )
         }
     }
@@ -535,6 +551,10 @@ struct CitySearchSheet: View {
                     location: location,
                     method: prayerTimeCache.calculationMethod,
                     school: prayerTimeCache.school
+                )
+                await PrayerNotificationService.shared.refreshSchedule(
+                    remindersEnabled: (UserDefaults.standard.object(forKey: "remindersEnabled") as? Bool) ?? true,
+                    prayerTimeCache: prayerTimeCache
                 )
                 onDismiss()
             } catch {

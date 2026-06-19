@@ -1,26 +1,31 @@
 import SwiftUI
 import SwiftData
 import Combine
+import UIKit
 
 struct HomeTab: View {
     let T: AppTheme
     let showArabic: Bool
     @ObservedObject var prayerTimeCache: PrayerTimeCache
 
+    @Environment(\.scenePhase) private var scenePhase
     @Environment(\.modelContext) private var modelContext
     @Query private var allEntries: [PrayerEntry]
 
     @State private var bloomingId: String? = nil
     @State private var entered = false
-    @State private var tick = Date()
+    @State private var now = Date()
 
-    private let minuteTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+    private let clockTimer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
 
-    private var todayKey: String { makeDayKey() }
+    private var prayerTimeZone: TimeZone? {
+        prayerTimeCache.selectedLocation.flatMap { TimeZone(identifier: $0.timezone) }
+    }
+    private var todayKey: String { PrayerTimeCache.dateKey(for: now, timezone: prayerTimeZone) }
     private var todayEntries: [PrayerEntry] { allEntries.filter { $0.dayKey == todayKey } }
-    private var nowMin: Int { currentMinutes() }
+    private var nowMin: Int { minutesSinceMidnight(now, timezone: prayerTimeZone) }
 
-    private var todayPrayerTimes: DailyPrayerTimes? { prayerTimeCache.prayerTimes(for: Date()) }
+    private var todayPrayerTimes: DailyPrayerTimes? { prayerTimeCache.prayerTimes(for: now) }
     private var todaysPrayers: [Prayer] { Prayer.dailyPrayers(from: todayPrayerTimes) }
     private var prayerStates: [PrayerViewModel] { decoratePrayers(prayers: todaysPrayers, entries: todayEntries, nowMin: nowMin) }
     private var prayedCount: Int { prayerStates.filter(\.isPrayed).count }
@@ -44,7 +49,8 @@ struct HomeTab: View {
     private var hijriDate: String {
         var cal = Calendar(identifier: .islamicCivil)
         cal.locale = Locale(identifier: "en")
-        let c = cal.dateComponents([.month, .day], from: Date())
+        if let prayerTimeZone { cal.timeZone = prayerTimeZone }
+        let c = cal.dateComponents([.month, .day], from: now)
         let months = ["Muharram","Safar","Rabi\u{2018} al-Awwal","Rabi\u{2018} al-Thani",
                       "Jumada al-Awwal","Jumada al-Thani","Rajab","Sha\u{2018}ban",
                       "Ramadan","Shawwal","Dhul Qa\u{2018}dah","Dhul Hijjah"]
@@ -55,7 +61,8 @@ struct HomeTab: View {
     private var gregorianDate: String {
         let fmt = DateFormatter()
         fmt.dateFormat = "EEEE, d MMMM yyyy"
-        return fmt.string(from: Date())
+        fmt.timeZone = prayerTimeZone ?? TimeZone.current
+        return fmt.string(from: now)
     }
 
     var body: some View {
@@ -65,7 +72,7 @@ struct HomeTab: View {
                 VStack(spacing: 0) {
                     HeaderView(T: T, hijri: hijriDate, greg: gregorianDate)
 
-                    HeroView(rows: prayerStates, T: T, nowMin: nowMin,
+                    HeroView(rows: prayerStates, T: T, now: now, timeZone: prayerTimeZone,
                              blooming: bloomingId, onMark: toggle)
                         .padding(.top, 18)
 
@@ -111,9 +118,16 @@ struct HomeTab: View {
             }
         }
         .onAppear {
+            now = Date()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) { entered = true }
         }
-        .onReceive(minuteTimer) { _ in tick = Date() }
+        .onReceive(clockTimer) { tick in now = tick }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.significantTimeChangeNotification)) { _ in
+            now = Date()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active { now = Date() }
+        }
     }
 
     private func toggle(_ id: String) {

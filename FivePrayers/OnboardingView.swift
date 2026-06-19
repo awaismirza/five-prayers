@@ -281,7 +281,7 @@ struct OnboardingView: View {
                     Text("Enable reminders")
                         .font(.system(size: 15, weight: .semibold))
                         .foregroundStyle(T.text)
-                    Text("15 minutes before each prayer")
+                    Text("Notify me when each prayer begins")
                         .font(.system(size: 13))
                         .foregroundStyle(T.muted)
                 }
@@ -346,6 +346,12 @@ struct OnboardingView: View {
     private func finish() {
         trackingStart = makeDayKey(selectedDate)
         remindersEnabled = reminders
+        Task {
+            await PrayerNotificationService.shared.refreshSchedule(
+                remindersEnabled: reminders,
+                prayerTimeCache: prayerTimeCache
+            )
+        }
         onComplete()
     }
 }

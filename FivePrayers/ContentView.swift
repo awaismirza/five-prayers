@@ -3,6 +3,7 @@ import SwiftData
 
 struct ContentView: View {
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.scenePhase) private var scenePhase
 
     @AppStorage("onboardingDone")   private var onboardingDone  = false
     @AppStorage("accent")           private var accentRaw       = AccentColor.emerald.rawValue
@@ -32,7 +33,7 @@ struct ContentView: View {
                 HomeTab(T: T, showArabic: showArabic, prayerTimeCache: prayerTimeCache)
                     .tabItem { Label("Home", systemImage: "house.fill") }
 
-                AnalyticsTab(T: T, trackingStart: trackingStart)
+                AnalyticsTab(T: T, trackingStart: trackingStart, prayerTimeCache: prayerTimeCache)
                     .tabItem { Label("Analytics", systemImage: "chart.bar.fill") }
 
                 SettingsTab(
@@ -51,6 +52,27 @@ struct ContentView: View {
             .task {
                 prayerTimeCache.load()
                 await prayerTimeCache.checkAndRedownloadIfNeeded()
+                await PrayerNotificationService.shared.refreshSchedule(
+                    remindersEnabled: remindersEnabled,
+                    prayerTimeCache: prayerTimeCache
+                )
+            }
+            .onChange(of: scenePhase) { _, phase in
+                guard phase == .active else { return }
+                Task {
+                    await PrayerNotificationService.shared.refreshSchedule(
+                        remindersEnabled: remindersEnabled,
+                        prayerTimeCache: prayerTimeCache
+                    )
+                }
+            }
+            .onChange(of: remindersEnabled) { _, enabled in
+                Task {
+                    await PrayerNotificationService.shared.refreshSchedule(
+                        remindersEnabled: enabled,
+                        prayerTimeCache: prayerTimeCache
+                    )
+                }
             }
         }
     }

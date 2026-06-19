@@ -139,14 +139,20 @@ struct AppTheme {
 // MARK: - Analytics stats
 
 struct PrayerPrayerStat {
+    let expected: Int
     let logged: Int
+    let missed: Int
     let onTime: Int
     let madeUp: Int
+    var completionRate: Int { expected > 0 ? min(100, Int(Double(logged) / Double(expected) * 100)) : 0 }
+    var missedRate: Int { expected > 0 ? min(100, Int(Double(missed) / Double(expected) * 100)) : 0 }
     var onTimeRate: Int { logged > 0 ? Int(Double(onTime) / Double(logged) * 100) : 0 }
 }
 
 struct PrayerStats {
     let daysTracked: Int
+    let totalExpected: Int
+    let totalMissed: Int
     let completionRate: Int
     let onTimeRate: Int
     let totalLogged: Int
@@ -157,17 +163,30 @@ struct PrayerStats {
     let byPrayer: [String: PrayerPrayerStat]
 }
 
-func computeStats(entries: [PrayerEntry], trackingStart: String) -> PrayerStats {
+func computeStats(
+    entries: [PrayerEntry],
+    trackingStart: String,
+    todayPrayers: [Prayer] = Prayer.fallback,
+    now: Date = Date(),
+    timezone: TimeZone? = nil
+) -> PrayerStats {
     let fmt = DateFormatter()
     fmt.dateFormat = "yyyy-MM-dd"
-    let cal = Calendar.current
+    fmt.timeZone = timezone ?? TimeZone.current
+    var cal = Calendar.current
+    if let timezone { cal.timeZone = timezone }
     let startDate = fmt.date(from: trackingStart) ?? Date()
-    let now = Date()
     let daysTracked = max(1, (cal.dateComponents([.day], from: startDate, to: now).day ?? 0) + 1)
+    let todayKey = fmt.string(from: now)
+    let nowMin = minutesSinceMidnight(now, timezone: timezone)
 
     var totalOnTime = 0, totalMadeUp = 0
     var byRaw: [String: (logged: Int, onTime: Int, madeUp: Int)] = [:]
-    for entry in entries {
+    let visibleEntries = entries.filter { entry in
+        guard let entryDate = fmt.date(from: entry.dayKey) else { return false }
+        return entryDate >= startDate && entryDate <= now
+    }
+    for entry in visibleEntries {
         var b = byRaw[entry.prayerId] ?? (0, 0, 0)
         b.logged += 1
         if entry.madeUp { b.madeUp += 1; totalMadeUp += 1 }
@@ -175,14 +194,31 @@ func computeStats(entries: [PrayerEntry], trackingStart: String) -> PrayerStats 
         byRaw[entry.prayerId] = b
     }
 
-    let totalLogged = entries.count
-    let expected = daysTracked * 5
+    var expectedByPrayer = Dictionary(uniqueKeysWithValues: Prayer.all.map { ($0.id, 0) })
+    var day = cal.startOfDay(for: startDate)
+    let end = cal.startOfDay(for: now)
+    while day <= end {
+        let dayKey = fmt.string(from: day)
+        if dayKey < todayKey {
+            for prayer in Prayer.all { expectedByPrayer[prayer.id, default: 0] += 1 }
+        } else if dayKey == todayKey {
+            for prayer in todayPrayers where prayer.timeMinutes <= nowMin {
+                expectedByPrayer[prayer.id, default: 0] += 1
+            }
+        }
+        guard let next = cal.date(byAdding: .day, value: 1, to: day) else { break }
+        day = next
+    }
+
+    let totalLogged = visibleEntries.count
+    let expected = expectedByPrayer.values.reduce(0, +)
+    let totalMissed = max(0, expected - totalLogged)
     let completionRate = expected > 0 ? min(100, Int(Double(totalLogged) / Double(expected) * 100)) : 0
     let onTimeRate = totalLogged > 0 ? Int(Double(totalOnTime) / Double(totalLogged) * 100) : 0
 
     // Streak: consecutive days with all 5 prayers
     var dayCount: [String: Int] = [:]
-    for entry in entries { dayCount[entry.dayKey, default: 0] += 1 }
+    for entry in visibleEntries { dayCount[entry.dayKey, default: 0] += 1 }
     let fullDays = dayCount.filter { $0.value >= 5 }.keys.sorted()
 
     var tempStreak = 0, longestStreak = 0
@@ -205,12 +241,26 @@ func computeStats(entries: [PrayerEntry], trackingStart: String) -> PrayerStats 
         }
     }
 
+    var byPrayer: [String: PrayerPrayerStat] = [:]
+    for prayer in Prayer.all {
+        let raw = byRaw[prayer.id] ?? (0, 0, 0)
+        let expected = expectedByPrayer[prayer.id, default: 0]
+        byPrayer[prayer.id] = PrayerPrayerStat(
+            expected: expected,
+            logged: raw.logged,
+            missed: max(0, expected - raw.logged),
+            onTime: raw.onTime,
+            madeUp: raw.madeUp
+        )
+    }
+
     return PrayerStats(
-        daysTracked: daysTracked, completionRate: completionRate,
+        daysTracked: daysTracked, totalExpected: expected, totalMissed: totalMissed,
+        completionRate: completionRate,
         onTimeRate: onTimeRate, totalLogged: totalLogged,
         totalOnTime: totalOnTime, totalMadeUp: totalMadeUp,
         currentStreak: currentStreak, longestStreak: longestStreak,
-        byPrayer: byRaw.mapValues { v in PrayerPrayerStat(logged: v.logged, onTime: v.onTime, madeUp: v.madeUp) }
+        byPrayer: byPrayer
     )
 }
 
@@ -261,9 +311,14 @@ func makeDayKey(_ date: Date = Date()) -> String {
     return fmt.string(from: date)
 }
 
+func minutesSinceMidnight(_ date: Date = Date(), timezone: TimeZone? = nil) -> Int {
+    var cal = Calendar.current
+    if let timezone { cal.timeZone = timezone }
+    return cal.component(.hour, from: date) * 60 + cal.component(.minute, from: date)
+}
+
 func currentMinutes() -> Int {
-    let c = Calendar.current
-    return c.component(.hour, from: Date()) * 60 + c.component(.minute, from: Date())
+    minutesSinceMidnight()
 }
 
 func fmtClock(_ mins: Int) -> String {

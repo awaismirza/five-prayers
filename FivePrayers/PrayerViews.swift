@@ -148,22 +148,28 @@ struct ProgressTrackView: View {
 
 struct CountdownView: View {
     let targetMin: Int
+    let now: Date
+    let timeZone: TimeZone?
     @State private var remainingSecs: Int = 0
 
     var body: some View {
         Text(fmtLeft(remainingSecs))
             .monospacedDigit()
             .onAppear { updateSecs() }
+            .onChange(of: now) { _, _ in updateSecs() }
+            .onChange(of: targetMin) { _, _ in updateSecs() }
             .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
-                if remainingSecs > 0 { remainingSecs -= 1 }
+                updateSecs()
             }
     }
 
     private func updateSecs() {
-        let c = Calendar.current
-        let nowSec = c.component(.hour,   from: Date()) * 3600
-                   + c.component(.minute, from: Date()) * 60
-                   + c.component(.second, from: Date())
+        var c = Calendar.current
+        if let timeZone { c.timeZone = timeZone }
+        let current = Date()
+        let nowSec = c.component(.hour, from: current) * 3600
+                   + c.component(.minute, from: current) * 60
+                   + c.component(.second, from: current)
         remainingSecs = max(0, targetMin * 60 - nowSec)
     }
 }
@@ -173,7 +179,8 @@ struct CountdownView: View {
 struct HeroView: View {
     let rows: [PrayerViewModel]
     let T: AppTheme
-    let nowMin: Int
+    let now: Date
+    let timeZone: TimeZone?
     let blooming: String?
     let onMark: (String) -> Void
 
@@ -261,18 +268,18 @@ struct HeroView: View {
     private var subView: some View {
         if allDone {
             Text("May they be accepted. Rest easy tonight.")
-        } else if let now = nowRow, let next = nextRow {
-            let _ = now  // suppress unused warning
+        } else if let current = nowRow, let next = nextRow {
+            let _ = current  // suppress unused warning
             HStack(spacing: 0) {
                 Text("\(next.prayer.name) follows in ")
-                CountdownView(targetMin: next.prayer.timeMinutes)
+                CountdownView(targetMin: next.prayer.timeMinutes, now: now, timeZone: timeZone)
             }
         } else if nowRow != nil {
             Text("The last prayer of the day")
         } else if let next = nextRow {
             HStack(spacing: 0) {
                 Text("Begins in ")
-                CountdownView(targetMin: next.prayer.timeMinutes)
+                CountdownView(targetMin: next.prayer.timeMinutes, now: now, timeZone: timeZone)
                 Text(" — a moment to breathe")
             }
         } else {

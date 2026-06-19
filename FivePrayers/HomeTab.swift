@@ -2,6 +2,7 @@ import SwiftUI
 import SwiftData
 import Combine
 import UIKit
+import UserNotifications
 
 struct HomeTab: View {
     let T: AppTheme
@@ -10,11 +11,14 @@ struct HomeTab: View {
 
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.openURL) private var openURL
+    @AppStorage("remindersEnabled") private var remindersEnabled = true
     @Query private var allEntries: [PrayerEntry]
 
     @State private var bloomingId: String? = nil
     @State private var entered = false
     @State private var now = Date()
+    @State private var notificationsReady = true
 
     private let clockTimer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
 
@@ -70,7 +74,13 @@ struct HomeTab: View {
             T.page.ignoresSafeArea()
             ScrollView {
                 VStack(spacing: 0) {
-                    HeaderView(T: T, hijri: hijriDate, greg: gregorianDate)
+                    HeaderView(
+                        T: T,
+                        hijri: hijriDate,
+                        greg: gregorianDate,
+                        showNotificationPrompt: !notificationsReady,
+                        onEnableNotifications: enableNotifications
+                    )
 
                     HeroView(rows: prayerStates, T: T, now: now, timeZone: prayerTimeZone,
                              blooming: bloomingId, onMark: toggle)
@@ -120,6 +130,7 @@ struct HomeTab: View {
         .onAppear {
             now = Date()
             removeFutureEntriesForToday()
+            Task { await updateNotificationPrompt() }
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) { entered = true }
         }
         .onReceive(clockTimer) { tick in
@@ -134,7 +145,11 @@ struct HomeTab: View {
             if phase == .active {
                 now = Date()
                 removeFutureEntriesForToday()
+                Task { await updateNotificationPrompt() }
             }
+        }
+        .onChange(of: remindersEnabled) { _, _ in
+            Task { await updateNotificationPrompt() }
         }
     }
 
@@ -167,5 +182,39 @@ struct HomeTab: View {
             removed = true
         }
         if removed { try? modelContext.save() }
+    }
+
+    private func enableNotifications() {
+        Task {
+            let status = await PrayerNotificationService.shared.authorizationStatus()
+            if status == .denied {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    openURL(url)
+                }
+                await updateNotificationPrompt()
+                return
+            }
+
+            remindersEnabled = true
+            await PrayerNotificationService.shared.refreshSchedule(
+                remindersEnabled: true,
+                prayerTimeCache: prayerTimeCache
+            )
+            await updateNotificationPrompt()
+        }
+    }
+
+    private func updateNotificationPrompt() async {
+        let status = await PrayerNotificationService.shared.authorizationStatus()
+        let allowed: Bool
+        switch status {
+        case .authorized, .provisional, .ephemeral:
+            allowed = true
+        case .notDetermined, .denied:
+            allowed = false
+        @unknown default:
+            allowed = false
+        }
+        notificationsReady = remindersEnabled && allowed
     }
 }

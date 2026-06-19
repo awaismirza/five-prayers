@@ -321,6 +321,8 @@ struct HeaderView: View {
     let T: AppTheme
     let hijri: String
     let greg: String
+    let showNotificationPrompt: Bool
+    let onEnableNotifications: () -> Void
 
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
@@ -337,7 +339,56 @@ struct HeaderView: View {
                     .foregroundStyle(T.faint)
             }
             Spacer()
+            if showNotificationPrompt {
+                EnableNotificationButton(T: T, action: onEnableNotifications)
+                    .transition(.scale.combined(with: .opacity))
+            }
         }
+        .animation(.spring(response: 0.35, dampingFraction: 0.82), value: showNotificationPrompt)
+    }
+}
+
+struct EnableNotificationButton: View {
+    let T: AppTheme
+    let action: () -> Void
+
+    @State private var pulse = false
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 7) {
+                ZStack(alignment: .topTrailing) {
+                    Image(systemName: "bell.badge.fill")
+                        .font(.system(size: 16, weight: .semibold))
+                    Circle()
+                        .fill(T.amber)
+                        .frame(width: 7, height: 7)
+                        .offset(x: 2, y: -2)
+                }
+                Text("Enable")
+                    .font(.system(size: 12, weight: .bold))
+            }
+            .foregroundStyle(T.onPrimary)
+            .padding(.horizontal, 11)
+            .padding(.vertical, 9)
+            .background(T.primary)
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .overlay(
+                RoundedRectangle(cornerRadius: 14)
+                    .strokeBorder(T.primary.opacity(pulse ? 0.38 : 0.12), lineWidth: 2)
+                    .scaleEffect(pulse ? 1.12 : 1)
+                    .opacity(pulse ? 0 : 0.9)
+            )
+            .shadow(color: T.primary.opacity(T.dark ? 0.26 : 0.20), radius: 12, x: 0, y: 7)
+            .scaleEffect(pulse ? 1.03 : 1)
+        }
+        .buttonStyle(ScaleButtonStyle(scale: 0.96))
+        .onAppear {
+            withAnimation(.easeInOut(duration: 1.15).repeatForever(autoreverses: true)) {
+                pulse = true
+            }
+        }
+        .accessibilityLabel("Enable notifications")
     }
 }
 

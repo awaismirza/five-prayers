@@ -7,8 +7,11 @@ struct AnalyticsTab: View {
     let trackingStart: String
     @ObservedObject var prayerTimeCache: PrayerTimeCache
 
+    @Environment(\.modelContext) private var modelContext
     @Query private var allEntries: [PrayerEntry]
+    @Query private var madeUpEntries: [MadeUpPrayerEntry]
     @State private var now = Date()
+    @State private var selectedPrayer: Prayer? = nil
 
     private let clockTimer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
 
@@ -23,6 +26,18 @@ struct AnalyticsTab: View {
     private var stats: PrayerStats {
         computeStats(
             entries: allEntries,
+            madeUpEntries: madeUpEntries,
+            trackingStart: trackingStart,
+            todayPrayers: todayPrayers,
+            now: now,
+            timezone: prayerTimeZone
+        )
+    }
+
+    private var remainingMissed: [MissedPrayerInstance] {
+        remainingMissedPrayerInstances(
+            entries: allEntries,
+            madeUpEntries: madeUpEntries,
             trackingStart: trackingStart,
             todayPrayers: todayPrayers,
             now: now,
@@ -45,26 +60,24 @@ struct AnalyticsTab: View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 0) {
 
-                    // Header
                     VStack(alignment: .leading, spacing: 1) {
                         Text("Your journey")
                             .font(.system(size: 14, weight: .medium))
                             .foregroundStyle(T.muted)
-                        Text("Tracking since \(sinceLabel)")
+                        Text("Progress")
                             .font(.system(size: 22, weight: .bold))
                             .foregroundStyle(T.text)
                             .kerning(-0.4)
-                        Text(stats.daysTracked == 1 ? "today" : "\(stats.daysTracked) days")
+                        Text("Tracking since \(sinceLabel) · \(stats.daysTracked == 1 ? "today" : "\(stats.daysTracked) days")")
                             .font(.system(size: 13))
                             .foregroundStyle(T.faint)
                             .padding(.top, 2)
                     }
                     .padding(.bottom, 20)
 
-                    MissedTotalCard(T: T, value: stats.totalMissed)
+                    ProgressSummaryCard(T: T, stats: stats)
                         .padding(.bottom, 12)
 
-                    // Big stat cards
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
                         StatCard(T: T, label: "Current Streak",
                                  value: stats.currentStreak, unit: "days",
@@ -72,32 +85,37 @@ struct AnalyticsTab: View {
                         StatCard(T: T, label: "Longest Streak",
                                  value: stats.longestStreak, unit: "days",
                                  icon: "star.fill", iconColor: Color(hex: "E2B92C"))
-                        StatCard(T: T, label: "Completion",
+                        StatCard(T: T, label: "Prayed Rate",
                                  value: stats.completionRate, unit: "%",
                                  icon: "checkmark.circle.fill", iconColor: T.prayed)
                         StatCard(T: T, label: "Prayed",
-                                 value: stats.totalLogged, unit: "logged",
+                                 value: stats.totalPrayed, unit: "total",
                                  icon: "hands.sparkles.fill", iconColor: T.primary)
                     }
                     .padding(.bottom, 28)
 
-                    // Per-prayer consistency
-                    Text("Consistency by prayer")
+                    Text("Missed prayers by prayer")
                         .font(.system(size: 17, weight: .bold))
                         .foregroundStyle(T.text)
                         .kerning(-0.2)
                         .padding(.bottom, 12)
 
-                    VStack(spacing: 10) {
-                        ForEach(Prayer.all) { prayer in
-                            let stat = stats.byPrayer[prayer.id]
-                                ?? PrayerPrayerStat(expected: 0, logged: 0, missed: 0, onTime: 0, madeUp: 0)
-                            PrayerBreakdownRow(prayer: prayer, stat: stat, T: T)
+                    if stats.totalRemainingMissed == 0 {
+                        ProgressEmptyCard(T: T)
+                            .padding(.bottom, 28)
+                    } else {
+                        VStack(spacing: 10) {
+                            ForEach(Prayer.all) { prayer in
+                                let stat = stats.byPrayer[prayer.id]
+                                    ?? PrayerPrayerStat(expected: 0, prayed: 0, missedOriginal: 0, onTime: 0, madeUp: 0, remainingMissed: 0)
+                                ProgressPrayerRow(prayer: prayer, stat: stat, T: T) {
+                                    if stat.remainingMissed > 0 { selectedPrayer = prayer }
+                                }
+                            }
                         }
+                        .padding(.bottom, 28)
                     }
-                    .padding(.bottom, 28)
 
-                    // Prayed vs missed
                     Text("Breakdown")
                         .font(.system(size: 17, weight: .bold))
                         .foregroundStyle(T.text)
@@ -105,10 +123,10 @@ struct AnalyticsTab: View {
                         .padding(.bottom, 12)
 
                     LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                        BreakdownCard(T: T, label: "Total Prayed",
-                                      value: stats.totalLogged, color: T.prayed)
+                        BreakdownCard(T: T, label: "Made Up",
+                                      value: stats.totalMadeUp, color: T.prayed)
                         BreakdownCard(T: T, label: "Total Missed",
-                                      value: stats.totalMissed, color: T.amber)
+                                      value: stats.totalMissedOriginal, color: T.amber)
                     }
                     .padding(.bottom, 22)
 
@@ -126,39 +144,99 @@ struct AnalyticsTab: View {
         }
         .onAppear { now = Date() }
         .onReceive(clockTimer) { tick in now = tick }
+        .sheet(item: $selectedPrayer) { prayer in
+            MadeUpPrayerSheet(
+                prayer: prayer,
+                instances: remainingMissed.filter { $0.prayerId == prayer.id },
+                stat: stats.byPrayer[prayer.id]
+                    ?? PrayerPrayerStat(expected: 0, prayed: 0, missedOriginal: 0, onTime: 0, madeUp: 0, remainingMissed: 0),
+                T: T,
+                madeUpEntries: madeUpEntries,
+                onMarkMadeUp: markMadeUp
+            )
+            .presentationDetents([.medium, .large])
+        }
+    }
+
+    private func markMadeUp(_ instance: MissedPrayerInstance) {
+        let key = missedInstanceKey(dayKey: instance.dayKey, prayerId: instance.prayerId)
+        let alreadyMadeUp = madeUpEntries.contains {
+            missedInstanceKey(dayKey: $0.originalDayKey, prayerId: $0.prayerId) == key
+        }
+        guard !alreadyMadeUp else { return }
+
+        modelContext.insert(
+            MadeUpPrayerEntry(
+                prayerId: instance.prayerId,
+                prayerName: instance.prayerName,
+                originalDayKey: instance.dayKey,
+                originalDate: instance.date,
+                madeUpAt: Date()
+            )
+        )
+        try? modelContext.save()
     }
 }
 
-// MARK: - Missed total card
+// MARK: - Progress summary card
 
-struct MissedTotalCard: View {
+struct ProgressSummaryCard: View {
     let T: AppTheme
-    let value: Int
+    let stats: PrayerStats
 
     var body: some View {
-        HStack(spacing: 14) {
-            Image(systemName: "exclamationmark.circle.fill")
-                .font(.system(size: 30))
-                .foregroundStyle(T.amber)
-                .frame(width: 38)
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Total Missed Prayers")
-                    .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(T.muted)
-                Text("\(value)")
-                    .font(.system(size: 34, weight: .bold))
-                    .foregroundStyle(T.text)
-                    .monospacedDigit()
-                Text("Since tracking started")
-                    .font(.system(size: 12.5))
-                    .foregroundStyle(T.faint)
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 14) {
+                Image(systemName: "checkmark.seal.fill")
+                    .font(.system(size: 30))
+                    .foregroundStyle(stats.totalRemainingMissed == 0 ? T.prayed : T.amber)
+                    .frame(width: 38)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Remaining Missed")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(T.muted)
+                    Text("\(stats.totalRemainingMissed) prayers")
+                        .font(.system(size: 34, weight: .bold))
+                        .foregroundStyle(T.text)
+                        .monospacedDigit()
+                    Text("Made Up: \(stats.totalMadeUp) · Total missed: \(stats.totalMissedOriginal)")
+                        .font(.system(size: 12.5))
+                        .foregroundStyle(T.faint)
+                }
+                Spacer(minLength: 0)
             }
-            Spacer(minLength: 0)
         }
         .padding(16)
         .background(T.card)
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .overlay(RoundedRectangle(cornerRadius: 20).strokeBorder(T.line, lineWidth: 1))
+        .shadow(color: T.dark ? .black.opacity(0.24) : .black.opacity(0.08),
+            radius: 16, x: 0, y: 10)
+    }
+}
+
+struct ProgressEmptyCard: View {
+    let T: AppTheme
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 10) {
+                Image(systemName: "sparkles")
+                    .font(.system(size: 21))
+                    .foregroundStyle(T.prayed)
+                Text("No remaining missed prayers.")
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundStyle(T.text)
+            }
+            Text("May Allah keep you consistent.")
+                .font(.system(size: 13))
+                .foregroundStyle(T.muted)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(14)
+        .background(T.card)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(T.line, lineWidth: 1))
         .shadow(color: T.dark ? .black.opacity(0.24) : .black.opacity(0.08),
             radius: 16, x: 0, y: 10)
     }
@@ -208,10 +286,11 @@ struct StatCard: View {
 
 // MARK: - Prayer breakdown row
 
-struct PrayerBreakdownRow: View {
+struct ProgressPrayerRow: View {
     let prayer: Prayer
     let stat: PrayerPrayerStat
     let T: AppTheme
+    let onTap: () -> Void
 
     private var barColor: Color {
         stat.completionRate >= 80 ? T.prayed
@@ -220,46 +299,62 @@ struct PrayerBreakdownRow: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack {
-                Text(prayer.name)
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundStyle(T.text)
-                Spacer()
-                Text("\(stat.logged) prayed · \(stat.missed) missed")
-                    .font(.system(size: 12))
-                    .foregroundStyle(T.muted)
-            }
-            GeometryReader { geo in
-                ZStack(alignment: .leading) {
-                    Capsule().fill(T.cardSub).frame(height: 6)
-                    Capsule().fill(barColor)
-                        .frame(
-                            width: max(
-                                CGFloat(stat.completionRate) / 100.0 * geo.size.width,
-                                stat.logged > 0 ? 8 : 0
-                            ),
-                            height: 6
-                        )
-                        .animation(.easeOut(duration: 0.4), value: stat.completionRate)
+        Button(action: onTap) {
+            VStack(alignment: .leading, spacing: 9) {
+                HStack(alignment: .center) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text(prayer.name)
+                            .font(.system(size: 15, weight: .bold))
+                            .foregroundStyle(T.text)
+                        Text("Remaining missed: \(stat.remainingMissed)")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(stat.remainingMissed > 0 ? T.amberOn : T.muted)
+                    }
+                    Spacer()
+                    if stat.remainingMissed > 0 {
+                        Text("Make Up")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundStyle(T.onPrimary)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 6)
+                            .background(T.primary)
+                            .clipShape(Capsule())
+                    }
                 }
-            }
-            .frame(height: 6)
-            HStack(spacing: 6) {
-                Text("\(stat.completionRate)% prayed")
-                if stat.madeUp > 0 {
-                    Text("· \(stat.madeUp) made up")
+
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        Capsule().fill(T.cardSub).frame(height: 6)
+                        Capsule().fill(barColor)
+                            .frame(
+                                width: max(
+                                    CGFloat(stat.completionRate) / 100.0 * geo.size.width,
+                                    stat.prayed > 0 ? 8 : 0
+                                ),
+                                height: 6
+                            )
+                            .animation(.easeOut(duration: 0.4), value: stat.completionRate)
+                    }
                 }
+                .frame(height: 6)
+
+                HStack(spacing: 6) {
+                    Text("Prayed: \(stat.prayed)")
+                    Text("· Made Up: \(stat.madeUp)")
+                    Text("· Total missed: \(stat.missedOriginal)")
+                }
+                .font(.system(size: 12))
+                .foregroundStyle(T.faint)
             }
-            .font(.system(size: 12))
-            .foregroundStyle(T.faint)
+            .padding(14)
+            .background(T.card)
+            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(T.line, lineWidth: 1))
+            .shadow(color: T.dark ? .black.opacity(0.24) : .black.opacity(0.08),
+                radius: 16, x: 0, y: 10)
         }
-        .padding(14)
-        .background(T.card)
-        .clipShape(RoundedRectangle(cornerRadius: 14))
-        .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(T.line, lineWidth: 1))
-        .shadow(color: T.dark ? .black.opacity(0.24) : .black.opacity(0.08),
-            radius: 16, x: 0, y: 10)
+        .buttonStyle(ScaleButtonStyle(scale: stat.remainingMissed > 0 ? 0.985 : 1))
+        .disabled(stat.remainingMissed == 0)
     }
 }
 

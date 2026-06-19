@@ -16,6 +16,7 @@ struct FivePrayersApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             PrayerEntry.self,
+            MadeUpPrayerEntry.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

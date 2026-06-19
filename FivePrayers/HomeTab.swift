@@ -119,23 +119,33 @@ struct HomeTab: View {
         }
         .onAppear {
             now = Date()
+            removeFutureEntriesForToday()
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) { entered = true }
         }
-        .onReceive(clockTimer) { tick in now = tick }
+        .onReceive(clockTimer) { tick in
+            now = tick
+            removeFutureEntriesForToday()
+        }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.significantTimeChangeNotification)) { _ in
             now = Date()
+            removeFutureEntriesForToday()
         }
         .onChange(of: scenePhase) { _, phase in
-            if phase == .active { now = Date() }
+            if phase == .active {
+                now = Date()
+                removeFutureEntriesForToday()
+            }
         }
     }
 
     private func toggle(_ id: String) {
+        guard let row = prayerStates.first(where: { $0.id == id }), !row.isUpcoming else { return }
+
         if let existing = todayEntries.first(where: { $0.prayerId == id }) {
             modelContext.delete(existing)
         } else {
             let isMissed: Bool
-            if case .missed = prayerStates.first(where: { $0.id == id })?.display {
+            if case .missed = row.display {
                 isMissed = true
             } else {
                 isMissed = false
@@ -145,5 +155,17 @@ struct HomeTab: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.72) { bloomingId = nil }
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
+    }
+
+    private func removeFutureEntriesForToday() {
+        let futureIds = Set(todaysPrayers.filter { $0.timeMinutes > nowMin }.map(\.id))
+        guard !futureIds.isEmpty else { return }
+
+        var removed = false
+        for entry in todayEntries where futureIds.contains(entry.prayerId) {
+            modelContext.delete(entry)
+            removed = true
+        }
+        if removed { try? modelContext.save() }
     }
 }

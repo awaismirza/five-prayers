@@ -61,6 +61,7 @@ struct PrayerViewModel: Identifiable {
     let display: PrayerDisplayState
     var id: String { prayer.id }
     var isPrayed: Bool { if case .prayed = display { true } else { false } }
+    var isUpcoming: Bool { if case .upcoming = display { true } else { false } }
 }
 
 // MARK: - Accent color
@@ -140,31 +141,39 @@ struct AppTheme {
 
 struct PrayerPrayerStat {
     let expected: Int
-    let logged: Int
-    let missed: Int
+    let prayed: Int
+    let missedOriginal: Int
     let onTime: Int
     let madeUp: Int
-    var completionRate: Int { expected > 0 ? min(100, Int(Double(logged) / Double(expected) * 100)) : 0 }
-    var missedRate: Int { expected > 0 ? min(100, Int(Double(missed) / Double(expected) * 100)) : 0 }
-    var onTimeRate: Int { logged > 0 ? Int(Double(onTime) / Double(logged) * 100) : 0 }
+    let remainingMissed: Int
+    var logged: Int { prayed }
+    var missed: Int { remainingMissed }
+    var completionRate: Int { expected > 0 ? min(100, Int(Double(prayed) / Double(expected) * 100)) : 0 }
+    var missedRate: Int { expected > 0 ? min(100, Int(Double(remainingMissed) / Double(expected) * 100)) : 0 }
+    var onTimeRate: Int { prayed > 0 ? Int(Double(onTime) / Double(prayed) * 100) : 0 }
 }
 
 struct PrayerStats {
     let daysTracked: Int
     let totalExpected: Int
-    let totalMissed: Int
+    let totalMissedOriginal: Int
+    let totalRemainingMissed: Int
     let completionRate: Int
     let onTimeRate: Int
-    let totalLogged: Int
+    let totalPrayed: Int
     let totalOnTime: Int
     let totalMadeUp: Int
     let currentStreak: Int
     let longestStreak: Int
     let byPrayer: [String: PrayerPrayerStat]
+
+    var totalMissed: Int { totalRemainingMissed }
+    var totalLogged: Int { totalPrayed }
 }
 
 func computeStats(
     entries: [PrayerEntry],
+    madeUpEntries: [MadeUpPrayerEntry] = [],
     trackingStart: String,
     todayPrayers: [Prayer] = Prayer.fallback,
     now: Date = Date(),
@@ -180,16 +189,21 @@ func computeStats(
     let todayKey = fmt.string(from: now)
     let nowMin = minutesSinceMidnight(now, timezone: timezone)
 
-    var totalOnTime = 0, totalMadeUp = 0
+    var totalOnTime = 0, loggedMadeUp = 0
     var byRaw: [String: (logged: Int, onTime: Int, madeUp: Int)] = [:]
     let visibleEntries = entries.filter { entry in
         guard let entryDate = fmt.date(from: entry.dayKey) else { return false }
+        if entry.dayKey == todayKey,
+           let prayer = todayPrayers.first(where: { $0.id == entry.prayerId }),
+           prayer.timeMinutes > nowMin {
+            return false
+        }
         return entryDate >= startDate && entryDate <= now
     }
     for entry in visibleEntries {
         var b = byRaw[entry.prayerId] ?? (0, 0, 0)
         b.logged += 1
-        if entry.madeUp { b.madeUp += 1; totalMadeUp += 1 }
+        if entry.madeUp { b.madeUp += 1; loggedMadeUp += 1 }
         else             { b.onTime += 1; totalOnTime += 1 }
         byRaw[entry.prayerId] = b
     }
@@ -212,7 +226,11 @@ func computeStats(
 
     let totalLogged = visibleEntries.count
     let expected = expectedByPrayer.values.reduce(0, +)
-    let totalMissed = max(0, expected - totalLogged)
+    let totalMissedOriginal = max(0, expected - totalLogged)
+    let madeUpByPrayer = madeUpCountsByPrayer(madeUpEntries, from: startDate, through: now, formatter: fmt)
+    let totalMadeUpFromMissed = madeUpByPrayer.values.reduce(0, +)
+    let totalRemainingMissed = max(0, totalMissedOriginal - totalMadeUpFromMissed)
+    let totalMadeUp = loggedMadeUp + totalMadeUpFromMissed
     let completionRate = expected > 0 ? min(100, Int(Double(totalLogged) / Double(expected) * 100)) : 0
     let onTimeRate = totalLogged > 0 ? Int(Double(totalOnTime) / Double(totalLogged) * 100) : 0
 
@@ -245,23 +263,128 @@ func computeStats(
     for prayer in Prayer.all {
         let raw = byRaw[prayer.id] ?? (0, 0, 0)
         let expected = expectedByPrayer[prayer.id, default: 0]
+        let missedOriginal = max(0, expected - raw.logged)
+        let madeUpFromMissed = madeUpByPrayer[prayer.id, default: 0]
         byPrayer[prayer.id] = PrayerPrayerStat(
             expected: expected,
-            logged: raw.logged,
-            missed: max(0, expected - raw.logged),
+            prayed: raw.logged,
+            missedOriginal: missedOriginal,
             onTime: raw.onTime,
-            madeUp: raw.madeUp
+            madeUp: raw.madeUp + madeUpFromMissed,
+            remainingMissed: max(0, missedOriginal - madeUpFromMissed)
         )
     }
 
     return PrayerStats(
-        daysTracked: daysTracked, totalExpected: expected, totalMissed: totalMissed,
+        daysTracked: daysTracked, totalExpected: expected,
+        totalMissedOriginal: totalMissedOriginal, totalRemainingMissed: totalRemainingMissed,
         completionRate: completionRate,
-        onTimeRate: onTimeRate, totalLogged: totalLogged,
+        onTimeRate: onTimeRate, totalPrayed: totalLogged,
         totalOnTime: totalOnTime, totalMadeUp: totalMadeUp,
         currentStreak: currentStreak, longestStreak: longestStreak,
         byPrayer: byPrayer
     )
+}
+
+func remainingMissedPrayerInstances(
+    entries: [PrayerEntry],
+    madeUpEntries: [MadeUpPrayerEntry],
+    trackingStart: String,
+    todayPrayers: [Prayer] = Prayer.fallback,
+    now: Date = Date(),
+    timezone: TimeZone? = nil
+) -> [MissedPrayerInstance] {
+    let fmt = DateFormatter()
+    fmt.dateFormat = "yyyy-MM-dd"
+    fmt.timeZone = timezone ?? TimeZone.current
+    var cal = Calendar.current
+    if let timezone { cal.timeZone = timezone }
+
+    let startDate = fmt.date(from: trackingStart) ?? now
+    let todayKey = fmt.string(from: now)
+    let nowMin = minutesSinceMidnight(now, timezone: timezone)
+    let loggedKeys = Set(entries.map { missedInstanceKey(dayKey: $0.dayKey, prayerId: $0.prayerId) })
+    let madeUpKeys = Set(madeUpEntries.map { missedInstanceKey(dayKey: $0.originalDayKey, prayerId: $0.prayerId) })
+
+    var instances: [MissedPrayerInstance] = []
+    var day = cal.startOfDay(for: startDate)
+    let end = cal.startOfDay(for: now)
+
+    while day <= end {
+        let dayKey = fmt.string(from: day)
+        let prayers: [Prayer]
+        if dayKey < todayKey {
+            prayers = Prayer.all
+        } else if dayKey == todayKey {
+            prayers = todayPrayers.filter { $0.timeMinutes <= nowMin }
+        } else {
+            prayers = []
+        }
+
+        for prayer in prayers {
+            let id = missedInstanceKey(dayKey: dayKey, prayerId: prayer.id)
+            guard !loggedKeys.contains(id), !madeUpKeys.contains(id) else { continue }
+            instances.append(
+                MissedPrayerInstance(
+                    id: id,
+                    prayerId: prayer.id,
+                    prayerName: prayer.name,
+                    dayKey: dayKey,
+                    date: day,
+                    scheduledTime: scheduledDate(dayKey: dayKey, minutes: prayer.timeMinutes, calendar: cal)
+                )
+            )
+        }
+
+        guard let next = cal.date(byAdding: .day, value: 1, to: day) else { break }
+        day = next
+    }
+
+    return instances.sorted {
+        if $0.date == $1.date { return prayerSortIndex($0.prayerId) < prayerSortIndex($1.prayerId) }
+        return $0.date < $1.date
+    }
+}
+
+func missedInstanceKey(dayKey: String, prayerId: String) -> String {
+    "\(dayKey)-\(prayerId)"
+}
+
+private func madeUpCountsByPrayer(
+    _ madeUpEntries: [MadeUpPrayerEntry],
+    from startDate: Date,
+    through now: Date,
+    formatter: DateFormatter
+) -> [String: Int] {
+    var seen = Set<String>()
+    var counts: [String: Int] = [:]
+    for entry in madeUpEntries {
+        guard let originalDate = formatter.date(from: entry.originalDayKey),
+              originalDate >= startDate,
+              originalDate <= now else { continue }
+        let key = missedInstanceKey(dayKey: entry.originalDayKey, prayerId: entry.prayerId)
+        guard seen.insert(key).inserted else { continue }
+        counts[entry.prayerId, default: 0] += 1
+    }
+    return counts
+}
+
+private func scheduledDate(dayKey: String, minutes: Int, calendar: Calendar) -> Date? {
+    let parts = dayKey.split(separator: "-").compactMap { Int($0) }
+    guard parts.count == 3 else { return nil }
+    var comps = DateComponents()
+    comps.calendar = calendar
+    comps.timeZone = calendar.timeZone
+    comps.year = parts[0]
+    comps.month = parts[1]
+    comps.day = parts[2]
+    comps.hour = minutes / 60
+    comps.minute = minutes % 60
+    return calendar.date(from: comps)
+}
+
+private func prayerSortIndex(_ prayerId: String) -> Int {
+    Prayer.all.firstIndex { $0.id == prayerId } ?? Int.max
 }
 
 // MARK: - CSV export
@@ -339,10 +462,10 @@ func decoratePrayers(prayers: [Prayer], entries: [PrayerEntry], nowMin: Int) -> 
     for p in prayers where p.timeMinutes <= nowMin { currentId = p.id }
 
     return prayers.map { prayer in
-        if let entry = entries.first(where: { $0.prayerId == prayer.id }) {
-            return PrayerViewModel(prayer: prayer, display: .prayed(madeUp: entry.madeUp))
-        } else if prayer.timeMinutes > nowMin {
+        if prayer.timeMinutes > nowMin {
             return PrayerViewModel(prayer: prayer, display: .upcoming)
+        } else if let entry = entries.first(where: { $0.prayerId == prayer.id }) {
+            return PrayerViewModel(prayer: prayer, display: .prayed(madeUp: entry.madeUp))
         } else if prayer.id == currentId {
             return PrayerViewModel(prayer: prayer, display: .now)
         } else {

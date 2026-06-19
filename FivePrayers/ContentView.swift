@@ -34,7 +34,7 @@ struct ContentView: View {
                     .tabItem { Label("Home", systemImage: "house.fill") }
 
                 AnalyticsTab(T: T, trackingStart: trackingStart, prayerTimeCache: prayerTimeCache)
-                    .tabItem { Label("Analytics", systemImage: "chart.bar.fill") }
+                    .tabItem { Label("Progress", systemImage: "chart.line.uptrend.xyaxis") }
 
                 SettingsTab(
                     T: T,
@@ -80,5 +80,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: PrayerEntry.self, inMemory: true)
+        .modelContainer(for: [PrayerEntry.self, MadeUpPrayerEntry.self], inMemory: true)
 }

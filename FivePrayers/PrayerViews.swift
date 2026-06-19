@@ -337,19 +337,6 @@ struct HeaderView: View {
                     .foregroundStyle(T.faint)
             }
             Spacer()
-            ZStack {
-                Circle()
-                    .fill(T.card)
-                    .overlay(Circle().strokeBorder(T.line, lineWidth: 1))
-                    .shadow(
-                        color: T.dark ? .black.opacity(0.32) : .black.opacity(0.08),
-                        radius: 10, x: 0, y: 6
-                    )
-                Image(systemName: "person")
-                    .font(.system(size: 18, weight: .regular))
-                    .foregroundStyle(T.muted)
-            }
-            .frame(width: 44, height: 44)
         }
     }
 }
@@ -408,6 +395,10 @@ struct PrayerRowView: View {
         return false
     }
 
+    private var isUpcoming: Bool {
+        row.isUpcoming
+    }
+
     private var tag: RowTag? {
         switch row.display {
         case .prayed(let madeUp):
@@ -418,7 +409,7 @@ struct PrayerRowView: View {
         case .now:
             return RowTag(label: "Now", color: T.onPrimary, background: T.primary)
         case .upcoming:
-            return nil
+            return RowTag(label: "Upcoming", color: T.faint, background: T.cardSub)
         }
     }
 
@@ -483,8 +474,9 @@ struct PrayerRowView: View {
                 radius: 16, x: 0, y: 10
             )
         }
-        .buttonStyle(ScaleButtonStyle(scale: 0.985))
-        .opacity(appeared ? 1 : 0)
+        .buttonStyle(ScaleButtonStyle(scale: isUpcoming ? 1 : 0.985))
+        .disabled(isUpcoming)
+        .opacity(appeared ? (isUpcoming ? 0.64 : 1) : 0)
         .offset(y: appeared ? 0 : 10)
         .onAppear {
             if animate {

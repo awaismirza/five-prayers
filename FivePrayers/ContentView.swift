@@ -14,6 +14,7 @@ struct ContentView: View {
 
     @StateObject private var citySearchService = CitySearchService()
     @StateObject private var prayerTimeCache   = PrayerTimeCache()
+    @StateObject private var appUpdateService   = AppUpdateService.shared
 
     private var accent: AccentColor { AccentColor(rawValue: accentRaw) ?? .emerald }
     private var T: AppTheme { AppTheme.make(dark: colorScheme == .dark, accent: accent) }
@@ -44,11 +45,39 @@ struct ContentView: View {
                     accentRaw: $accentRaw,
                     showArabic: $showArabic,
                     prayerTimeCache: prayerTimeCache,
-                    citySearchService: citySearchService
+                    citySearchService: citySearchService,
+                    appUpdateService: appUpdateService
                 )
                 .tabItem { Label("Settings", systemImage: "gearshape.fill") }
             }
             .tint(T.primary)
+            .alert(item: $appUpdateService.alertType) { alertType in
+                switch alertType {
+                case .updateAvailable(let version, let url):
+                    return Alert(
+                        title: Text("Update Available"),
+                        message: Text("A new version (\(version)) of Five Prayers is available. Would you like to update now?"),
+                        primaryButton: .default(Text("Update")) {
+                            if let url = url {
+                                UIApplication.shared.open(url)
+                            }
+                        },
+                        secondaryButton: .cancel(Text("Later"))
+                    )
+                case .noUpdate(let currentVersion):
+                    return Alert(
+                        title: Text("Up to Date"),
+                        message: Text("Five Prayers is up to date (Version \(currentVersion))."),
+                        dismissButton: .default(Text("OK"))
+                    )
+                case .checkFailed(let message):
+                    return Alert(
+                        title: Text("Check Failed"),
+                        message: Text(message),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }
+            }
             .task {
                 prayerTimeCache.load()
                 await prayerTimeCache.checkAndRedownloadIfNeeded()
@@ -56,6 +85,7 @@ struct ContentView: View {
                     remindersEnabled: remindersEnabled,
                     prayerTimeCache: prayerTimeCache
                 )
+                await appUpdateService.checkForUpdates(explicit: false)
             }
             .onChange(of: scenePhase) { _, phase in
                 guard phase == .active else { return }

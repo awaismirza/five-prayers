@@ -11,6 +11,7 @@ struct SettingsTab: View {
     @Binding var showArabic: Bool
     @ObservedObject var prayerTimeCache: PrayerTimeCache
     @ObservedObject var citySearchService: CitySearchService
+    @ObservedObject var appUpdateService: AppUpdateService
 
     @Query private var allEntries: [PrayerEntry]
 
@@ -283,6 +284,48 @@ struct SettingsTab: View {
                         .buttonStyle(ScaleButtonStyle(scale: 0.98))
                     }
 
+                    // Updates
+                    SettingSection(title: "Updates", T: T) {
+                        Button {
+                            Task {
+                                await appUpdateService.checkForUpdates(explicit: true)
+                            }
+                        } label: {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Check for Updates")
+                                        .font(.system(size: 14, weight: .semibold))
+                                        .foregroundStyle(T.text)
+                                    Text(appUpdateService.lastCheckedText)
+                                        .font(.system(size: 13))
+                                        .foregroundStyle(T.muted)
+                                }
+                                Spacer()
+                                if appUpdateService.isChecking {
+                                    ProgressView()
+                                        .tint(T.primary)
+                                        .scaleEffect(0.8)
+                                } else {
+                                    Image(systemName: "arrow.clockwise.circle")
+                                        .font(.system(size: 20))
+                                        .foregroundStyle(T.primary)
+                                }
+                            }
+                            .padding(14)
+                            .background(T.card)
+                            .clipShape(RoundedRectangle(cornerRadius: 14))
+                            .overlay(RoundedRectangle(cornerRadius: 14).strokeBorder(T.line, lineWidth: 1))
+                        }
+                        .buttonStyle(ScaleButtonStyle(scale: 0.98))
+                        .disabled(appUpdateService.isChecking)
+
+                        #if DEBUG
+                        ToggleRow(T: T, label: "Simulate Update Available",
+                                  detail: "Forces check to find version 2.0.0",
+                                  value: $appUpdateService.simulateUpdateAvailable)
+                        #endif
+                    }
+
                     // About
                     SettingSection(title: "About", T: T) {
                         VStack(alignment: .leading, spacing: 6) {
@@ -293,7 +336,8 @@ struct SettingsTab: View {
                                 .font(.system(size: 13))
                                 .foregroundStyle(T.muted)
                                 .lineSpacing(3)
-                            Text("Version 1.0 · June 2026")
+                            let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.1"
+                            Text("Version \(currentVersion) · June 2026")
                                 .font(.system(size: 13))
                                 .foregroundStyle(T.faint)
                                 .padding(.top, 2)
